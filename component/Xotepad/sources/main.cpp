@@ -4,6 +4,9 @@
 #include <wxx_menubar.h>
 #include <wxx_menu.h>
 
+#include <string>
+#include <fstream>
+#include <optional>
 
 class CEditorView : public CEdit {
 public:
@@ -58,6 +61,7 @@ public:
         CFrame::OnCreate(cs);
 
         this->setupMenuBar();
+        this->updateTitle();
 
         return 0;
     }
@@ -86,9 +90,11 @@ public:
 
 private:
     void handleFileNew() {
+        
     }
 
     void handleFileOpen() {
+
     }
 
     void handleFileSave() {
@@ -159,8 +165,34 @@ private:
         this->SetMenu(hMenuBar);
     }
 
+
+    std::string getDocumentName() const {
+        std::string documentName;
+
+        if (documentFileName) {
+            documentName = *documentFileName;
+        } else {
+            documentName = "Untitled " + std::to_string(documentCount);
+        }
+
+        return documentName + (documentDirty ? "*" : "");
+    }
+
+
+    std::string computeTitle(const std::string &documentName) const {
+        return "Xotacode - " + getDocumentName();
+    }
+
+
+    void updateTitle() {
+        SetTitle(computeTitle(getDocumentName()).c_str());
+    }
+
 private:
     CEditorView editControl;
+    std::optional<std::string> documentFileName;
+    bool documentDirty = false;
+    int documentCount = 1;
 };
 
 
