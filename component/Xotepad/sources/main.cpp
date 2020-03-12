@@ -3,6 +3,7 @@
 #include <wxx_frame.h>
 #include <wxx_menubar.h>
 #include <wxx_menu.h>
+#include <wxx_commondlg.h>
 
 #include <string>
 #include <fstream>
@@ -100,22 +101,38 @@ public:
     }
 
 private:
-    void handleFileNew() {
+    enum class AfterCheckAction {
+        Stop,
+        Continue
+    };
+
+
+    AfterCheckAction checkDocumentChanges() {
         if (documentDirty) {
             int result = MessageBox("Current file was modified. Do you want to save it?", appTitle.c_str(), MB_YESNOCANCEL | MB_ICONQUESTION);
 
             if (result == IDCANCEL) {
-                return;
+                return AfterCheckAction::Stop;
             }
 
             if (result == IDYES) {
                 if (this->handleFileSave() == IDCANCEL) {
-                    return;
+                    return AfterCheckAction::Stop;
                 }
             }
         }
 
+        return AfterCheckAction::Continue;
+    }
+
+
+    void handleFileNew() {
+        if (auto action = checkDocumentChanges(); action == AfterCheckAction::Stop) {
+            return;
+        }
+
         editControl.SetWindowTextA("");
+        documentFileName.reset();
         documentDirty = false;
         documentCount ++;
 
@@ -123,7 +140,20 @@ private:
     }
 
     void handleFileOpen() {
+        if (auto action = checkDocumentChanges(); action == AfterCheckAction::Stop) {
+            return;
+        }
 
+        const CString filter = _T("All Files (*.*)|*.*||");
+        const DWORD flags = OFN_LONGNAMES | OFN_PATHMUSTEXIST  | OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_EXPLORER | OFN_ENABLESIZING;
+        
+        CFileDialog fileDlg(TRUE, NULL, 0, flags, filter);
+
+        if (fileDlg.DoModal(*this) == IDCANCEL) {
+            return;
+        }
+
+        CString fileName = fileDlg.GetPathName();
     }
 
     int handleFileSave() {
