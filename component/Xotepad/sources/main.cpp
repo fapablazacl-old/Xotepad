@@ -19,21 +19,23 @@ public:
 class CMainWindow : public CFrame {
 private:
     enum  {
-        ID_FILE_NEW = 1000, 
-        ID_FILE_OPEN, 
-        ID_FILE_SAVE, 
-        ID_FILE_SAVEAS, 
-        ID_FILE_EXIT, 
+        IDM_FILE_NEW = 1000, 
+        IDM_FILE_OPEN, 
+        IDM_FILE_SAVE, 
+        IDM_FILE_SAVEAS, 
+        IDM_FILE_EXIT, 
 
-        ID_EDIT_UNDO = 2000, 
-        ID_EDIT_REDO, 
-        ID_EDIT_CUT, 
-        ID_EDIT_COPY, 
-        ID_EDIT_PASTE, 
-        ID_EDIT_SELECTALL, 
-        ID_EDIT_FINDREPLACE,
+        IDM_EDIT_UNDO = 2000, 
+        IDM_EDIT_REDO, 
+        IDM_EDIT_CUT, 
+        IDM_EDIT_COPY, 
+        IDM_EDIT_PASTE, 
+        IDM_EDIT_SELECTALL, 
+        IDM_EDIT_FINDREPLACE,
 
-        ID_HELP_ABOUT 
+        IDM_HELP_ABOUT = 3000,
+
+        IDC_EDITOR_CONTROL = 10000
     };
 
 public:
@@ -61,6 +63,9 @@ public:
         CFrame::OnCreate(cs);
 
         this->setupMenuBar();
+
+        documentDirty = false;
+
         this->updateTitle();
 
         return 0;
@@ -68,21 +73,27 @@ public:
 
     virtual BOOL OnCommand(WPARAM wparam, LPARAM lparam) override {
         const UINT id = LOWORD(wparam);
+        const UINT nc = HIWORD(wparam);
 
         switch (id) {
-            case ID_FILE_NEW: handleFileNew(); return FALSE;
-            case ID_FILE_OPEN: handleFileOpen(); return FALSE;
-            case ID_FILE_SAVE: handleFileSave(); return FALSE;
-            case ID_FILE_SAVEAS: handleFileSaveAs(); return FALSE;
-            case ID_FILE_EXIT: handleFileExit(); return FALSE;
-            case ID_EDIT_UNDO: handleEditUndo(); return FALSE;
-            case ID_EDIT_REDO: handleEditRedo(); return FALSE;
-            case ID_EDIT_CUT: handleEditCut(); return FALSE;
-            case ID_EDIT_COPY: handleEditCopy(); return FALSE;
-            case ID_EDIT_PASTE: handleEditPaste(); return FALSE;
-            case ID_EDIT_SELECTALL: handleEditSelectAll(); return FALSE;
-            case ID_EDIT_FINDREPLACE: handleEditFindReplace(); return FALSE;
-            case ID_HELP_ABOUT: handleHelpAbout(); return FALSE;
+            case IDM_FILE_NEW: handleFileNew(); return FALSE;
+            case IDM_FILE_OPEN: handleFileOpen(); return FALSE;
+            case IDM_FILE_SAVE: handleFileSave(); return FALSE;
+            case IDM_FILE_SAVEAS: handleFileSaveAs(); return FALSE;
+            case IDM_FILE_EXIT: handleFileExit(); return FALSE;
+            case IDM_EDIT_UNDO: handleEditUndo(); return FALSE;
+            case IDM_EDIT_REDO: handleEditRedo(); return FALSE;
+            case IDM_EDIT_CUT: handleEditCut(); return FALSE;
+            case IDM_EDIT_COPY: handleEditCopy(); return FALSE;
+            case IDM_EDIT_PASTE: handleEditPaste(); return FALSE;
+            case IDM_EDIT_SELECTALL: handleEditSelectAll(); return FALSE;
+            case IDM_EDIT_FINDREPLACE: handleEditFindReplace(); return FALSE;
+            case IDM_HELP_ABOUT: handleHelpAbout(); return FALSE;
+        }
+
+        if (lparam == (LPARAM)editControl.GetHwnd()) {
+            documentDirty = true;
+            updateTitle();
         }
 
         return FALSE;
@@ -133,26 +144,26 @@ private:
 
     void setupMenuBar() {
         HMENU hFileMenu = CreateMenu();
-        ::AppendMenu(hFileMenu, MF_STRING, ID_FILE_NEW, "New");
+        ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_NEW, "New");
         ::AppendMenu(hFileMenu, MF_SEPARATOR, 0, "");
-        ::AppendMenu(hFileMenu, MF_STRING, ID_FILE_OPEN, "Open");
+        ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_OPEN, "Open");
         ::AppendMenu(hFileMenu, MF_SEPARATOR, 0, "");
-        ::AppendMenu(hFileMenu, MF_STRING, ID_FILE_SAVE, "Save");
-        ::AppendMenu(hFileMenu, MF_STRING, ID_FILE_SAVEAS, "Save As");
+        ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_SAVE, "Save");
+        ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_SAVEAS, "Save As");
         ::AppendMenu(hFileMenu, MF_SEPARATOR, 0, "");
-        ::AppendMenu(hFileMenu, MF_STRING, ID_FILE_EXIT, "Exit");
+        ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_EXIT, "Exit");
 
         HMENU hEditMenu = CreateMenu();
-        ::AppendMenu(hEditMenu, MF_STRING, ID_EDIT_UNDO, "Undo");
-        ::AppendMenu(hEditMenu, MF_STRING, ID_EDIT_REDO, "Redo");
+        ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_UNDO, "Undo");
+        ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_REDO, "Redo");
         ::AppendMenu(hEditMenu, MF_SEPARATOR, 0, "");
-        ::AppendMenu(hEditMenu, MF_STRING, ID_EDIT_CUT, "Cut");
-        ::AppendMenu(hEditMenu, MF_STRING, ID_EDIT_COPY, "Copy");
-        ::AppendMenu(hEditMenu, MF_STRING, ID_EDIT_PASTE, "Paste");
+        ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_CUT, "Cut");
+        ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_COPY, "Copy");
+        ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_PASTE, "Paste");
         ::AppendMenu(hEditMenu, MF_SEPARATOR, 0, "");
-        ::AppendMenu(hEditMenu, MF_STRING, ID_EDIT_SELECTALL, "Select All");
+        ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_SELECTALL, "Select All");
         ::AppendMenu(hEditMenu, MF_SEPARATOR, 0, "");
-        ::AppendMenu(hEditMenu, MF_STRING, ID_EDIT_FINDREPLACE, "Find/Replace ...");
+        ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_FINDREPLACE, "Find/Replace ...");
 
         HMENU hHelpMenu = CreateMenu();
         ::AppendMenu(hHelpMenu, MF_STRING, 0, "About ...");
