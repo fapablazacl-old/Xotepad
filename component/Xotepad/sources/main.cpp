@@ -101,17 +101,37 @@ public:
 
 private:
     void handleFileNew() {
-        
+        if (documentDirty) {
+            int result = MessageBox("Current file was modified. Do you want to save it?", appTitle.c_str(), MB_YESNOCANCEL | MB_ICONQUESTION);
+
+            if (result == IDCANCEL) {
+                return;
+            }
+
+            if (result == IDYES) {
+                if (this->handleFileSave() == IDCANCEL) {
+                    return;
+                }
+            }
+        }
+
+        editControl.SetWindowTextA("");
+        documentDirty = false;
+        documentCount ++;
+
+        this->updateTitle();
     }
 
     void handleFileOpen() {
 
     }
 
-    void handleFileSave() {
+    int handleFileSave() {
+        return 0;
     }
 
-    void handleFileSaveAs() {
+    int handleFileSaveAs() {
+        return 0;
     }
 
     void handleFileExit() {
@@ -183,7 +203,7 @@ private:
         if (documentFileName) {
             documentName = *documentFileName;
         } else {
-            documentName = "Untitled " + std::to_string(documentCount);
+            documentName = untitledTitle + " " + std::to_string(documentCount);
         }
 
         return documentName + (documentDirty ? "*" : "");
@@ -191,7 +211,7 @@ private:
 
 
     std::string computeTitle(const std::string &documentName) const {
-        return "Xotacode - " + getDocumentName();
+        return appTitle + " - " + getDocumentName();
     }
 
 
@@ -204,6 +224,9 @@ private:
     std::optional<std::string> documentFileName;
     bool documentDirty = false;
     int documentCount = 1;
+
+    const std::string appTitle = "Xotapad";
+    const std::string untitledTitle = "Untitled";
 };
 
 
