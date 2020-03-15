@@ -55,15 +55,17 @@ public:
     virtual BOOL OnCommand(WPARAM wparam, LPARAM lparam) override;
 
 public:
-    virtual void displayTitle(const std::string &title) override;
+    virtual void setTitle(const std::string &title) override;
 
-    virtual void displayContent(const std::string &content) override;
+    virtual void setContent(const std::string &content) override;
+
+    virtual std::string getContent() const override;
 
     virtual void clearContent() override;
 
     virtual DialogResult showMessageBoxModal(const std::string &title, const std::string &message, const DialogButtons buttons, const DialogIcon icon) override;
 
-    virtual std::optional<std::string> showFilePickModal(const std::string &title) override;
+    virtual std::optional<std::string> showFilePickModal(FileDialog type, const std::string &title) override;
 
 private:
     void setupMenuBar();

@@ -3,13 +3,20 @@
 #include "MainWindowPresenter.hpp"
 
 
-void CMainWindow::displayTitle(const std::string &title) {
+void CMainWindow::setTitle(const std::string &title) {
     SetTitle(title.c_str());
 }
 
 
-void CMainWindow::displayContent(const std::string &content) {
+void CMainWindow::setContent(const std::string &content) {
     editorView.SetWindowTextA(content.c_str());
+}
+
+
+std::string CMainWindow::getContent() const {
+    CString text = editorView.GetWindowTextA();
+
+    return text.c_str();
 }
 
 
@@ -39,11 +46,11 @@ MainWindow::DialogResult CMainWindow::showMessageBoxModal(const std::string &tit
 }
 
 
-std::optional<std::string> CMainWindow::showFilePickModal(const std::string &title) {
+std::optional<std::string> CMainWindow::showFilePickModal(FileDialog type, const std::string &title) {
     const CString filter = _T("All Files (*.*)|*.*||");
     const DWORD flags = OFN_LONGNAMES | OFN_PATHMUSTEXIST  | OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_EXPLORER | OFN_ENABLESIZING;
         
-    CFileDialog fileDlg(TRUE, NULL, 0, flags, filter);
+    CFileDialog fileDlg(type == FileDialog::Open ? TRUE : FALSE, NULL, 0, flags, filter);
 
     fileDlg.SetTitle(title.c_str());
 

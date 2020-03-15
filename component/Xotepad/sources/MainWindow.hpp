@@ -27,15 +27,21 @@ public:
 
     virtual ~MainWindow();
 
-    virtual void displayTitle(const std::string &title) = 0;
+    virtual void setTitle(const std::string &title) = 0;
 
-    virtual void displayContent(const std::string &content) = 0;
+    virtual void setContent(const std::string &content) = 0;
+
+    virtual std::string getContent() const = 0;
 
     virtual void clearContent() = 0;
 
     virtual DialogResult showMessageBoxModal(const std::string &title, const std::string &message, const DialogButtons buttons, const DialogIcon icon) = 0;
 
-    virtual std::optional<std::string> showFilePickModal(const std::string &title) = 0;
+    enum class FileDialog {
+        Open, Save
+    };
+
+    virtual std::optional<std::string> showFilePickModal(FileDialog type, const std::string &title) = 0;
 
 protected:
     MainWindowPresenter *getPresenter() {

@@ -39,10 +39,40 @@ MainWindowPresenter::AfterCheckAction MainWindowPresenter::checkDocumentChanges(
 
 
 void MainWindowPresenter::handleFileNew() {
-    if (auto action = checkDocumentChanges(); action == AfterCheckAction::Stop) {
+    if (auto action = this->checkDocumentChanges(); action == AfterCheckAction::Stop) {
         return;
     }
 
+    this->newFile();
+}
+
+
+MainWindowPresenter::DialogResult MainWindowPresenter::handleFileSave() {
+    if (documentFileName) {
+        this->saveFile(*documentFileName, view->getContent());
+
+        return MainWindowPresenter::DialogResult::Accept;
+    }
+
+    return this->handleFileSaveAs();
+}
+
+
+MainWindowPresenter::DialogResult MainWindowPresenter::handleFileSaveAs() {
+    if (auto result = view->showFilePickModal(MainWindow::FileDialog::Save, "Save File ..."); result) {
+        const std::string fileName = *result;
+        const std::string content = view->getContent();
+
+        this->saveFile(fileName, content);
+
+        return MainWindowPresenter::DialogResult::Accept;
+    }
+
+    MainWindowPresenter::DialogResult::Cancel;
+}
+
+
+void MainWindowPresenter::newFile() {
     view->clearContent();
 
     documentFileName.reset();
@@ -54,36 +84,36 @@ void MainWindowPresenter::handleFileNew() {
 
 
 void MainWindowPresenter::handleFileOpen() {
-    if (auto action = checkDocumentChanges(); action == AfterCheckAction::Stop) {
+    if (auto action = this->checkDocumentChanges(); action == AfterCheckAction::Stop) {
         return;
     }
 
-    if (auto fileName = view->showFilePickModal(appTitle)) {
+    if (auto fileName = view->showFilePickModal(MainWindow::FileDialog::Open, appTitle)) {
         this->loadFile(*fileName);
     }
 }
 
 
-std::string MainWindowPresenter::getDocumentName() const {
-    std::string documentName;
+std::string MainWindowPresenter::getDocumentTitle() const {
+    std::string title;
 
     if (documentFileName) {
-        documentName = *documentFileName;
+        title = *documentFileName;
     } else {
-        documentName = untitledTitle + " " + std::to_string(documentCount);
+        title = untitledTitle + " " + std::to_string(documentCount);
     }
 
-    return documentName + (documentDirty ? "*" : "");
+    return title + (documentDirty ? "*" : "");
 }
 
 
-std::string MainWindowPresenter::computeTitle(const std::string &documentName) const {
-    return appTitle + " - " + documentName;
+std::string MainWindowPresenter::computeTitle(const std::string &documentTitle) const {
+    return appTitle + " - " + documentTitle;
 }
 
 
 void MainWindowPresenter::updateTitle() {
-    view->displayTitle(computeTitle(getDocumentName()).c_str());
+    view->setTitle(computeTitle(getDocumentTitle()).c_str());
 }
 
 
@@ -94,6 +124,17 @@ void MainWindowPresenter::loadFile(const std::string &fileName) {
     this->documentFileName = fileName;
     this->documentDirty = false;
     
-    view->displayContent(content);
+    view->setContent(content);
+    this->updateTitle();
+}
+
+
+void MainWindowPresenter::saveFile(const std::string &fileName, const std::string &content) {
+    FileService fileService;
+    fileService.saveFile(fileName.c_str(), content.c_str());
+
+    this->documentFileName = fileName;
+    this->documentDirty = false;
+    
     this->updateTitle();
 }

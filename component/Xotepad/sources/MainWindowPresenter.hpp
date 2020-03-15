@@ -12,6 +12,11 @@ public:
         Continue
     };
 
+    enum class DialogResult {
+        Cancel,
+        Accept
+    };
+
 public:
     void attachView(MainWindow *view);
 
@@ -23,13 +28,9 @@ public:
 
     void handleFileOpen();
 
-    int handleFileSave() {
-        return 0;
-    }
+    DialogResult handleFileSave();
 
-    int handleFileSaveAs() {
-        return 0;
-    }
+    DialogResult handleFileSaveAs();
 
     void handleFileExit() {
     }
@@ -59,13 +60,17 @@ public:
     }
 
 private:
-    std::string getDocumentName() const;
+    std::string getDocumentTitle() const;
 
     std::string computeTitle(const std::string &documentName) const;
 
     void updateTitle();
 
     void loadFile(const std::string &fileName);
+
+    void saveFile(const std::string &fileName, const std::string &content);
+
+    void newFile();
 
 private:
     MainWindow *view = nullptr;
