@@ -59,15 +59,13 @@ public:
     }
 
 private:
-    std::string loadFile(const char *fileName) const;
-
-    void saveFile(const char *fileName, const char *content);
-
     std::string getDocumentName() const;
 
     std::string computeTitle(const std::string &documentName) const;
 
     void updateTitle();
+
+    void loadFile(const std::string &fileName);
 
 private:
     MainWindow *view = nullptr;

@@ -15,6 +15,8 @@ set (sources
 	"sources/MainWindowModel.hpp" 
 	"sources/MainWindowPresenter.cpp" 
 	"sources/MainWindowPresenter.hpp" 
+	"sources/FileService.cpp" 
+	"sources/FileService.hpp" 
 )
 
 add_executable(${target} WIN32 ${sources})

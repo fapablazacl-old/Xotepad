@@ -1,8 +1,8 @@
 
 #include "MainWindowPresenter.hpp"
 #include "MainWindow.hpp"
+#include "FileService.hpp"
 
-#include <fstream>
 
 void MainWindowPresenter::attachView(MainWindow *view) {
     this->view = view;
@@ -14,6 +14,7 @@ void MainWindowPresenter::attachView(MainWindow *view) {
 
 void MainWindowPresenter::handleContentModified() {
     documentDirty = true;
+    this->updateTitle();
 }
 
 
@@ -58,57 +59,9 @@ void MainWindowPresenter::handleFileOpen() {
     }
 
     if (auto fileName = view->showFilePickModal(appTitle)) {
-        const std::string content = loadFile(fileName->c_str());
-        view->displayContent(content);
-        updateTitle();
+        this->loadFile(*fileName);
     }
-
-    /*
-    const CString filter = _T("All Files (*.*)|*.*||");
-    const DWORD flags = OFN_LONGNAMES | OFN_PATHMUSTEXIST  | OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_EXPLORER | OFN_ENABLESIZING;
-        
-    CFileDialog fileDlg(TRUE, NULL, 0, flags, filter);
-
-    if (fileDlg.DoModal(*this) == IDCANCEL) {
-        return;
-    }
-
-    CString fileName = fileDlg.GetPathName();
-    std::string content = loadFile(fileName.c_str());
-    */
 }
-
-
-std::string MainWindowPresenter::loadFile(const char *fileName) const {
-    std::fstream fs;
-    fs.open(fileName, std::ios_base::in);
-
-    if (!fs.is_open()) {
-        // TODO: handle error
-    }
-
-    std::string content, line;
-    while(! fs.eof()) {
-        std::getline(fs, line);
-        content += line;
-        content += "\r\n";
-    }
-
-    return content;
-}
-
-
-void MainWindowPresenter::saveFile(const char *fileName, const char *content) {
-    std::fstream fs;
-    fs.open(fileName, std::ios_base::out);
-
-    if (!fs.is_open()) {
-        // TODO: handle error
-    }
-
-    fs << content;
-}
-
 
 
 std::string MainWindowPresenter::getDocumentName() const {
@@ -125,10 +78,22 @@ std::string MainWindowPresenter::getDocumentName() const {
 
 
 std::string MainWindowPresenter::computeTitle(const std::string &documentName) const {
-    return appTitle + " - " + getDocumentName();
+    return appTitle + " - " + documentName;
 }
 
 
 void MainWindowPresenter::updateTitle() {
     view->displayTitle(computeTitle(getDocumentName()).c_str());
+}
+
+
+void MainWindowPresenter::loadFile(const std::string &fileName) {
+    const FileService fileService;
+    const std::string content = fileService.loadFile(fileName.c_str());
+
+    this->documentFileName = fileName;
+    this->documentDirty = false;
+    
+    view->displayContent(content);
+    this->updateTitle();
 }

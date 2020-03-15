@@ -37,7 +37,6 @@ public:
 
     virtual std::optional<std::string> showFilePickModal(const std::string &title) = 0;
 
-
 protected:
     MainWindowPresenter *getPresenter() {
         return presenter;
