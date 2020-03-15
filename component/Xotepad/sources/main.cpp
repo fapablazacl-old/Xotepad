@@ -9,6 +9,7 @@
 #include <fstream>
 #include <optional>
 
+
 class CEditorView : public CEdit {
 public:
     virtual void PreCreate(CREATESTRUCT& cs) override {
@@ -41,7 +42,7 @@ private:
 
 public:
     CMainWindow() {
-        this->SetView(editControl);
+        this->SetView(editorView);
     }
 
 
@@ -92,7 +93,7 @@ public:
             case IDM_HELP_ABOUT: handleHelpAbout(); return FALSE;
         }
 
-        if (lparam == (LPARAM)editControl.GetHwnd()) {
+        if (nc == EN_CHANGE && lparam == (LPARAM)editorView.GetHwnd()) {
             documentDirty = true;
             updateTitle();
         }
@@ -131,13 +132,14 @@ private:
             return;
         }
 
-        editControl.SetWindowTextA("");
+        editorView.SetWindowTextA("");
         documentFileName.reset();
         documentDirty = false;
         documentCount ++;
 
         this->updateTitle();
     }
+
 
     void handleFileOpen() {
         if (auto action = checkDocumentChanges(); action == AfterCheckAction::Stop) {
@@ -154,21 +156,62 @@ private:
         }
 
         CString fileName = fileDlg.GetPathName();
+        std::string content = loadFile(fileName.c_str());
+
+        editorView.SetWindowTextA(content.c_str());
+
+        this->updateTitle();
     }
+
+
+    std::string loadFile(const char *fileName) const {
+        std::fstream fs;
+        fs.open(fileName, std::ios_base::in);
+
+        if (!fs.is_open()) {
+            // TODO: handle error
+        }
+
+        std::string content, line;
+        while(! fs.eof()) {
+            std::getline(fs, line);
+            content += line;
+            content += "\r\n";
+        }
+
+        return content;
+    }
+
+
+    void saveFile(const char *fileName, const char *content) {
+        std::fstream fs;
+        fs.open(fileName, std::ios_base::out);
+
+        if (!fs.is_open()) {
+            // TODO: handle error
+        }
+
+        fs << content;
+    }
+
 
     int handleFileSave() {
-        return 0;
+        return IDYES;
     }
 
+
     int handleFileSaveAs() {
-        return 0;
+        return IDYES;
     }
+
 
     void handleFileExit() {
     }
 
+
     void handleEditUndo() {
     }
+
 
     void handleEditRedo() {
     }
@@ -250,7 +293,7 @@ private:
     }
 
 private:
-    CEditorView editControl;
+    CEditorView editorView;
     std::optional<std::string> documentFileName;
     bool documentDirty = false;
     int documentCount = 1;
