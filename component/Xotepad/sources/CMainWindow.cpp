@@ -69,6 +69,11 @@ void CMainWindow::clearContent() {
 }
 
 
+void CMainWindow::terminateApp() {
+    PostQuitMessage(0);
+}
+
+
 CMainWindow::CMainWindow(MainWindowPresenter *presenter) : MainWindow(presenter) {
     this->SetView(editorView);
 }
@@ -77,8 +82,8 @@ CMainWindow::CMainWindow(MainWindowPresenter *presenter) : MainWindow(presenter)
 CMainWindow::~CMainWindow() {}
 
 
-void CMainWindow::OnDestroy() { 
-    PostQuitMessage(0); 
+void CMainWindow::OnClose() { 
+    this->getPresenter()->handleCloseRequested();
 }
 
 

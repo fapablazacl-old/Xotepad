@@ -48,11 +48,15 @@ public:
 
     virtual ~CMainWindow();
 
-    virtual void OnDestroy();
+    // virtual void OnDestroy() override;
+
+    virtual void OnClose() override;
 
     virtual int OnCreate(CREATESTRUCT& cs) override;
 
     virtual BOOL OnCommand(WPARAM wparam, LPARAM lparam) override;
+
+    virtual void terminateApp() override;
 
 public:
     virtual void setTitle(const std::string &title) override;

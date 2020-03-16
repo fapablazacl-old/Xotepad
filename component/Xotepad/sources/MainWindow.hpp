@@ -19,6 +19,9 @@ enum class DialogIcon {
     Question
 };
 
+enum class FileDialog {
+    Open, Save
+};
 
 class MainWindowPresenter;
 class MainWindow {
@@ -39,11 +42,9 @@ public:
 
     virtual DialogResult showMessageBoxModal(const std::string &title, const std::string &message, const DialogButtons buttons, const DialogIcon icon) = 0;
 
-    enum class FileDialog {
-        Open, Save
-    };
-
     virtual std::optional<std::string> showFilePickModal(FileDialog type, const std::string &title) = 0;
+
+    virtual void terminateApp() = 0;
 
 protected:
     MainWindowPresenter *getPresenter() {

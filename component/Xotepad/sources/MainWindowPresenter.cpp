@@ -27,11 +27,13 @@ AfterCheckAction MainWindowPresenter::checkDocumentChanges() {
             DialogIcon::Question
         );
 
-        if (result == ::DialogResult::Cancel) {
+        if (result == DialogResult::Cancel) {
             return AfterCheckAction::Stop;
         }
 
-        this->handleFileSave();
+        if (result == DialogResult::Yes) {
+            this->handleFileSave();
+        }
     }
 
     return AfterCheckAction::Continue;
@@ -59,7 +61,7 @@ DialogUserOutcome MainWindowPresenter::handleFileSave() {
 
 
 DialogUserOutcome MainWindowPresenter::handleFileSaveAs() {
-    if (auto result = view->showFilePickModal(MainWindow::FileDialog::Save, "Save File ..."); result) {
+    if (auto result = view->showFilePickModal(FileDialog::Save, appTitle + " - Save File ..."); result) {
         const std::string fileName = *result;
         const std::string content = view->getContent();
 
@@ -88,7 +90,7 @@ void MainWindowPresenter::handleFileOpen() {
         return;
     }
 
-    if (auto fileName = view->showFilePickModal(MainWindow::FileDialog::Open, appTitle)) {
+    if (auto fileName = view->showFilePickModal(FileDialog::Open, appTitle + " - Open File ...")) {
         this->loadFile(*fileName);
     }
 }
@@ -137,4 +139,18 @@ void MainWindowPresenter::saveFile(const std::string &fileName, const std::strin
     this->documentDirty = false;
     
     this->updateTitle();
+}
+
+
+void MainWindowPresenter::handleFileExit() {
+    this->handleCloseRequested();
+}
+
+
+void MainWindowPresenter::handleCloseRequested() {
+    if (auto action = this->checkDocumentChanges(); action == AfterCheckAction::Stop) {
+        return;
+    }
+
+    view->terminateApp();
 }

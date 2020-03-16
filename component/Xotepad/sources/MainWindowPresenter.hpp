@@ -33,8 +33,9 @@ public:
 
     DialogUserOutcome handleFileSaveAs();
 
-    void handleFileExit() {
-    }
+    void handleFileExit();
+
+    void handleCloseRequested();
 
     void handleEditUndo() {
     }
@@ -59,6 +60,8 @@ public:
 
     void handleHelpAbout() {
     }
+
+
 
 private:
     std::string getDocumentTitle() const;
