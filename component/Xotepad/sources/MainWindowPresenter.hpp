@@ -4,19 +4,20 @@
 #include <optional>
 #include <string>
 
+enum class AfterCheckAction {
+    Stop,
+    Continue
+};
+
+
+enum class DialogUserOutcome {
+    Cancel,
+    Accept
+};
+
+
 class MainWindow;
 class MainWindowPresenter {
-public:
-    enum class AfterCheckAction {
-        Stop,
-        Continue
-    };
-
-    enum class DialogResult {
-        Cancel,
-        Accept
-    };
-
 public:
     void attachView(MainWindow *view);
 
@@ -28,9 +29,9 @@ public:
 
     void handleFileOpen();
 
-    DialogResult handleFileSave();
+    DialogUserOutcome handleFileSave();
 
-    DialogResult handleFileSaveAs();
+    DialogUserOutcome handleFileSaveAs();
 
     void handleFileExit() {
     }

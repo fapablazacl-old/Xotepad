@@ -18,16 +18,16 @@ void MainWindowPresenter::handleContentModified() {
 }
 
 
-MainWindowPresenter::AfterCheckAction MainWindowPresenter::checkDocumentChanges() {
+AfterCheckAction MainWindowPresenter::checkDocumentChanges() {
     if (documentDirty) {
         auto result = view->showMessageBoxModal(
             appTitle.c_str(), 
             "Current file was modified. Do you want to save it?", 
-            MainWindow::DialogButtons::YesNoCancel, 
-            MainWindow::DialogIcon::Question
+            DialogButtons::YesNoCancel, 
+            DialogIcon::Question
         );
 
-        if (result == MainWindow::DialogResult::Cancel) {
+        if (result == ::DialogResult::Cancel) {
             return AfterCheckAction::Stop;
         }
 
@@ -47,28 +47,28 @@ void MainWindowPresenter::handleFileNew() {
 }
 
 
-MainWindowPresenter::DialogResult MainWindowPresenter::handleFileSave() {
+DialogUserOutcome MainWindowPresenter::handleFileSave() {
     if (documentFileName) {
         this->saveFile(*documentFileName, view->getContent());
 
-        return MainWindowPresenter::DialogResult::Accept;
+        return DialogUserOutcome::Accept;
     }
 
     return this->handleFileSaveAs();
 }
 
 
-MainWindowPresenter::DialogResult MainWindowPresenter::handleFileSaveAs() {
+DialogUserOutcome MainWindowPresenter::handleFileSaveAs() {
     if (auto result = view->showFilePickModal(MainWindow::FileDialog::Save, "Save File ..."); result) {
         const std::string fileName = *result;
         const std::string content = view->getContent();
 
         this->saveFile(fileName, content);
 
-        return MainWindowPresenter::DialogResult::Accept;
+        return DialogUserOutcome::Accept;
     }
 
-    MainWindowPresenter::DialogResult::Cancel;
+    return DialogUserOutcome::Cancel;
 }
 
 

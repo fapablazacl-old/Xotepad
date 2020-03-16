@@ -20,7 +20,7 @@ std::string CMainWindow::getContent() const {
 }
 
 
-MainWindow::DialogResult CMainWindow::showMessageBoxModal(const std::string &title, const std::string &message, const DialogButtons buttons, const DialogIcon icon) {
+DialogResult CMainWindow::showMessageBoxModal(const std::string &title, const std::string &message, const DialogButtons buttons, const DialogIcon icon) {
     UINT type = 0;
 
     switch (buttons) {

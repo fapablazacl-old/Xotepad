@@ -4,26 +4,28 @@
 #include <string>
 #include <optional>
 
+
+enum class DialogResult {
+    Ok, Cancel, Yes, No
+};
+
+enum class DialogButtons {
+    Ok,
+    YesNo,
+    YesNoCancel
+};
+
+enum class DialogIcon {
+    Question
+};
+
+
 class MainWindowPresenter;
 class MainWindow {
 public:
     explicit MainWindow(MainWindowPresenter *presenter) {
         this->presenter = presenter;
     }
-
-    enum class DialogResult {
-       Ok, Cancel, Yes, No
-    };
-
-    enum class DialogButtons {
-        Ok,
-        YesNo,
-        YesNoCancel
-    };
-
-    enum class DialogIcon {
-        Question
-    };
 
     virtual ~MainWindow();
 
