@@ -89,9 +89,14 @@ public:
 
     virtual void paste() override;
 
+    virtual void setFont(const Font &font) override;
+
+    virtual Font getFont() const override;
+
 private:
     void setupMenuBar();
 
 private:
     CEditorView editorView;
+    HFONT fontHandle = NULL;
 };

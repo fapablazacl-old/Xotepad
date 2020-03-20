@@ -37,6 +37,12 @@ struct TextSelection {
 };
 
 
+struct Font {
+    const std::string &family;
+    const int size;
+};
+
+
 class MainWindowPresenter;
 class MainWindow {
 public:
@@ -77,6 +83,10 @@ public:
     virtual void paste() = 0;
 
     virtual TextSelection getSelection() const = 0;
+
+    virtual void setFont(const Font &font) = 0;
+
+    virtual Font getFont() const = 0;
 
 protected:
     MainWindowPresenter *getPresenter() {

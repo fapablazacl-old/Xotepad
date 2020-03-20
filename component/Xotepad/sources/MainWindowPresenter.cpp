@@ -6,6 +6,7 @@
 
 void MainWindowPresenter::attachView(MainWindow *view) {
     this->view = view;
+    this->view->setFont(Font{"Consolas", 14});
 
     documentDirty = false;
     this->updateTitle();

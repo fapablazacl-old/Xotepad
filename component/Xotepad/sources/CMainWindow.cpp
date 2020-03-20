@@ -123,12 +123,37 @@ void CMainWindow::paste() {
 }
 
 
+void CMainWindow::setFont(const Font &font) {
+    HFONT fontHandle = CreateFont(font.size,0,0,0,FW_DONTCARE,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,
+                CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH,TEXT(font.family.c_str()));
+
+    if (fontHandle) {
+        if (this->fontHandle) {
+            DeleteObject(fontHandle);
+        }
+    }
+
+    this->fontHandle = fontHandle;
+
+    editorView.SetFont(this->fontHandle);
+}
+
+
+Font CMainWindow::getFont() const {
+    return {"", 12};
+}
+
+
 CMainWindow::CMainWindow(MainWindowPresenter *presenter) : MainWindow(presenter) {
     this->SetView(editorView);
 }
 
 
-CMainWindow::~CMainWindow() {}
+CMainWindow::~CMainWindow() {
+    if (fontHandle) {
+        DeleteObject(fontHandle);
+    }
+}
 
 
 void CMainWindow::OnClose() { 
