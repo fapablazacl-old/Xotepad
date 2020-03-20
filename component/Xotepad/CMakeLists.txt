@@ -17,6 +17,8 @@ set (sources
 	"sources/MainWindowPresenter.hpp" 
 	"sources/FileService.cpp" 
 	"sources/FileService.hpp" 
+	"sources/CXotepadApp.cpp" 
+	"sources/CXotepadApp.hpp" 
 )
 
 add_executable(${target} WIN32 ${sources})

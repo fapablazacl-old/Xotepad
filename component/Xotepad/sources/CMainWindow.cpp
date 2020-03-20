@@ -1,6 +1,7 @@
 
 #include "CMainWindow.hpp"
 #include "MainWindowPresenter.hpp"
+#include <vector>
 
 
 void CMainWindow::setTitle(const std::string &title) {
@@ -231,7 +232,7 @@ void CMainWindow::setupMenuBar() {
     ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_FINDREPLACE, "&Find & Replace ...\t Ctrl+F");
 
     HMENU hHelpMenu = CreateMenu();
-    ::AppendMenu(hHelpMenu, MF_STRING, 0, "&About ...\t F1");
+    ::AppendMenu(hHelpMenu, MF_STRING, IDM_HELP_ABOUT, "&About ...\t F1");
 
     HMENU hMenuBar = CreateMenu();
     ::AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hFileMenu, "&File");
@@ -239,4 +240,25 @@ void CMainWindow::setupMenuBar() {
     ::AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hHelpMenu, "&Help");
 
     this->SetMenu(hMenuBar);
+
+    std::vector<ACCEL> accelerators = {
+        {FVIRTKEY | FCONTROL, 'N', IDM_FILE_NEW},
+        {FVIRTKEY | FCONTROL, 'O', IDM_FILE_OPEN},
+        {FVIRTKEY | FCONTROL, 'S', IDM_FILE_SAVE},
+        {FVIRTKEY | FALT, VK_F4, IDM_FILE_EXIT},
+
+        {FVIRTKEY | FCONTROL, 'Z', IDM_EDIT_UNDO},
+        {FVIRTKEY | FCONTROL | FSHIFT , 'Z', IDM_EDIT_REDO},
+        {FVIRTKEY | FCONTROL, 'X', IDM_EDIT_CUT},
+        {FVIRTKEY | FCONTROL, 'C', IDM_EDIT_COPY},
+        {FVIRTKEY | FCONTROL, 'V', IDM_EDIT_PASTE},
+        {FVIRTKEY | FCONTROL, 'A', IDM_EDIT_SELECTALL},
+        {FVIRTKEY | FCONTROL, 'F', IDM_EDIT_FINDREPLACE},
+
+        {FVIRTKEY, VK_F1, IDM_HELP_ABOUT},        
+    };
+
+    HACCEL hAccel = CreateAcceleratorTable(accelerators.data(), (int)accelerators.size());
+
+    GetApp()->SetAccelerators(hAccel, *this);
 }
