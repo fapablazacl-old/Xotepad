@@ -154,3 +154,36 @@ void MainWindowPresenter::handleCloseRequested() {
 
     view->terminateApp();
 }
+
+
+void MainWindowPresenter::handleEditUndo() {
+
+}
+
+void MainWindowPresenter::handleEditRedo() {
+
+}
+
+void MainWindowPresenter::handleEditCut() {
+
+}
+
+void MainWindowPresenter::handleEditCopy() {
+
+}
+
+void MainWindowPresenter::handleEditPaste() {
+
+}
+
+void MainWindowPresenter::handleEditSelectAll() {
+    view->selectAll();
+}
+
+void MainWindowPresenter::handleEditFindReplace() {
+
+}
+
+void MainWindowPresenter::handleHelpAbout() {
+
+}

@@ -71,6 +71,14 @@ public:
 
     virtual std::optional<std::string> showFilePickModal(FileDialog type, const std::string &title) override;
 
+    virtual void setSelection(const TextSelection &selection) override;
+
+    virtual TextSelection getSelection() const override;
+
+    virtual void selectAll() override;
+
+    virtual void clearSelection() override;
+
 private:
     void setupMenuBar();
 

@@ -37,31 +37,21 @@ public:
 
     void handleCloseRequested();
 
-    void handleEditUndo() {
-    }
+    void handleEditUndo();
 
-    void handleEditRedo() {
-    }
+    void handleEditRedo();
 
-    void handleEditCut() {
-    }
+    void handleEditCut();
 
-    void handleEditCopy() {
-    }
+    void handleEditCopy();
 
-    void handleEditPaste() {
-    }
+    void handleEditPaste();
 
-    void handleEditSelectAll() {
-    }
+    void handleEditSelectAll();
 
-    void handleEditFindReplace() {
-    }
+    void handleEditFindReplace();
 
-    void handleHelpAbout() {
-    }
-
-
+    void handleHelpAbout();
 
 private:
     std::string getDocumentTitle() const;

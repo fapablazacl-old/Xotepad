@@ -74,6 +74,30 @@ void CMainWindow::terminateApp() {
 }
 
 
+void CMainWindow::setSelection(const TextSelection &selection) {
+    editorView.SetSel(selection.start, selection.end, FALSE);
+}
+
+
+void CMainWindow::selectAll() {
+    editorView.SetSel(0, -1, FALSE);
+}
+
+
+void CMainWindow::clearSelection() {
+    editorView.SetSel(-1, -1, FALSE);
+}
+
+
+TextSelection CMainWindow::getSelection() const {
+    TextSelection selection;
+
+    editorView.GetSel(selection.start, selection.end);
+    
+    return selection;
+}
+
+
 CMainWindow::CMainWindow(MainWindowPresenter *presenter) : MainWindow(presenter) {
     this->SetView(editorView);
 }

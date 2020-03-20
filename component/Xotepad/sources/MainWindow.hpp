@@ -9,19 +9,33 @@ enum class DialogResult {
     Ok, Cancel, Yes, No
 };
 
+
 enum class DialogButtons {
     Ok,
     YesNo,
     YesNoCancel
 };
 
+
 enum class DialogIcon {
     Question
 };
 
+
 enum class FileDialog {
     Open, Save
 };
+
+
+struct TextSelection {
+    int start;
+    int end;
+
+    static TextSelection all() {
+        return {-1, -1};
+    }
+};
+
 
 class MainWindowPresenter;
 class MainWindow {
@@ -46,11 +60,18 @@ public:
 
     virtual void terminateApp() = 0;
 
+    virtual void setSelection(const TextSelection &selection) = 0;
+
+    virtual void selectAll() = 0;
+
+    virtual void clearSelection() = 0;
+
+    virtual TextSelection getSelection() const = 0;
+
 protected:
     MainWindowPresenter *getPresenter() {
         return presenter;
     }
-
 
 private:
     MainWindowPresenter *presenter = nullptr;
