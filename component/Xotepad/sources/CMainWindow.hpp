@@ -79,6 +79,16 @@ public:
 
     virtual void clearSelection() override;
 
+    virtual void undo() override;
+
+    virtual void redo() override;
+
+    virtual void cut() override;
+
+    virtual void copy() override;
+
+    virtual void paste() override;
+
 private:
     void setupMenuBar();
 

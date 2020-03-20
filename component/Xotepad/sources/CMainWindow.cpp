@@ -98,6 +98,31 @@ TextSelection CMainWindow::getSelection() const {
 }
 
 
+void CMainWindow::undo() {
+    editorView.Undo();
+}
+
+
+void CMainWindow::redo() {
+    
+}
+
+
+void CMainWindow::cut() {
+    editorView.Cut();
+}
+
+
+void CMainWindow::copy() {
+    editorView.Copy();
+}
+
+
+void CMainWindow::paste() {
+    editorView.Paste();
+}
+
+
 CMainWindow::CMainWindow(MainWindowPresenter *presenter) : MainWindow(presenter) {
     this->SetView(editorView);
 }

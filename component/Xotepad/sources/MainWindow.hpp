@@ -66,6 +66,16 @@ public:
 
     virtual void clearSelection() = 0;
 
+    virtual void undo() = 0;
+
+    virtual void redo() = 0;
+
+    virtual void cut() = 0;
+
+    virtual void copy() = 0;
+
+    virtual void paste() = 0;
+
     virtual TextSelection getSelection() const = 0;
 
 protected:

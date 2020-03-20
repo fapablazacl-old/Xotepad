@@ -157,32 +157,39 @@ void MainWindowPresenter::handleCloseRequested() {
 
 
 void MainWindowPresenter::handleEditUndo() {
-
+    view->undo();
 }
+
 
 void MainWindowPresenter::handleEditRedo() {
-
+    view->redo();
 }
+
 
 void MainWindowPresenter::handleEditCut() {
-
+    view->cut();
 }
+
 
 void MainWindowPresenter::handleEditCopy() {
-
+    view->copy();
 }
+
 
 void MainWindowPresenter::handleEditPaste() {
-
+    view->paste();
 }
+
 
 void MainWindowPresenter::handleEditSelectAll() {
     view->selectAll();
 }
 
+
 void MainWindowPresenter::handleEditFindReplace() {
 
 }
+
 
 void MainWindowPresenter::handleHelpAbout() {
 
