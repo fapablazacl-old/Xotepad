@@ -209,34 +209,34 @@ BOOL CMainWindow::OnCommand(WPARAM wparam, LPARAM lparam) {
 
 void CMainWindow::setupMenuBar() {
     HMENU hFileMenu = CreateMenu();
-    ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_NEW, "New");
+    ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_NEW, "&New\t Ctrl+N");
     ::AppendMenu(hFileMenu, MF_SEPARATOR, 0, "");
-    ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_OPEN, "Open");
+    ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_OPEN, "&Open\t Ctrl+O");
     ::AppendMenu(hFileMenu, MF_SEPARATOR, 0, "");
-    ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_SAVE, "Save");
-    ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_SAVEAS, "Save As");
+    ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_SAVE, "&Save\t Ctrl+S");
+    ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_SAVEAS, "Save &As");
     ::AppendMenu(hFileMenu, MF_SEPARATOR, 0, "");
-    ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_EXIT, "Exit");
+    ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_EXIT, "&Exit\t Alt+F4");
 
     HMENU hEditMenu = CreateMenu();
-    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_UNDO, "Undo");
-    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_REDO, "Redo");
+    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_UNDO, "&Undo\t Ctrl+Z");
+    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_REDO, "&Redo\t Ctrl+Shift+Z");
     ::AppendMenu(hEditMenu, MF_SEPARATOR, 0, "");
-    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_CUT, "Cut");
-    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_COPY, "Copy");
-    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_PASTE, "Paste");
+    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_CUT, "Cu&t\t Ctrl+X");
+    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_COPY, "&Copy\t Ctrl+C");
+    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_PASTE, "&Paste\t Ctrl+V");
     ::AppendMenu(hEditMenu, MF_SEPARATOR, 0, "");
-    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_SELECTALL, "Select All");
+    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_SELECTALL, "&Select All\t Ctrl+A");
     ::AppendMenu(hEditMenu, MF_SEPARATOR, 0, "");
-    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_FINDREPLACE, "Find/Replace ...");
+    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_FINDREPLACE, "&Find & Replace ...\t Ctrl+F");
 
     HMENU hHelpMenu = CreateMenu();
-    ::AppendMenu(hHelpMenu, MF_STRING, 0, "About ...");
+    ::AppendMenu(hHelpMenu, MF_STRING, 0, "&About ...\t F1");
 
     HMENU hMenuBar = CreateMenu();
-    ::AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hFileMenu, "File");
-    ::AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hEditMenu, "Edit");
-    ::AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hHelpMenu, "Help");
+    ::AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hFileMenu, "&File");
+    ::AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hEditMenu, "&Edit");
+    ::AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hHelpMenu, "&Help");
 
     this->SetMenu(hMenuBar);
 }
