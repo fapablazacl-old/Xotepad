@@ -10,14 +10,12 @@ void CMainWindow::setTitle(const std::string &title) {
 
 
 void CMainWindow::setContent(const std::string &content) {
-    editorView.SetWindowTextA(content.c_str());
+    editorView.SetText(content.c_str());
 }
 
 
 std::string CMainWindow::getContent() const {
-    CString text = editorView.GetWindowTextA();
-
-    return text.c_str();
+    return editorView.GetText();
 }
 
 
@@ -136,7 +134,7 @@ void CMainWindow::setFont(const Font &font) {
 
     this->fontHandle = fontHandle;
 
-    editorView.SetFont(this->fontHandle);
+    // editorView.SetFont(this->fontHandle);
 }
 
 
@@ -200,11 +198,27 @@ BOOL CMainWindow::OnCommand(WPARAM wparam, LPARAM lparam) {
         case IDM_HELP_ABOUT: getPresenter()->handleHelpAbout(); return FALSE;
     }
 
-    if (nc == EN_CHANGE && lparam == (LPARAM)editorView.GetHwnd()) {
-        getPresenter()->handleContentModified();
+    return FALSE;
+}
+
+
+LRESULT CMainWindow::OnNotify(WPARAM wparam, LPARAM lparam) {
+    auto nmhdr = reinterpret_cast<LPNMHDR>(lparam);
+
+    if (nmhdr->hwndFrom == editorView.GetHwnd()) {
+        auto notification = reinterpret_cast<SCNotification *>(nmhdr);
+
+        switch (nmhdr->code) {
+            case SCN_MODIFIED: {
+                if (notification->modificationType & SC_PERFORMED_USER) {
+                    // NOTE: This gets called when we set the text via the Scintilla API ...
+                    getPresenter()->handleContentModified();
+                }
+            }
+        }
     }
 
-    return FALSE;
+    return 0;
 }
 
 

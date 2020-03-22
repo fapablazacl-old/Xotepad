@@ -15,7 +15,10 @@ std::string FileService::loadFile(const char *fileName) const {
     while(! fs.eof()) {
         std::getline(fs, line);
         content += line;
-        content += "\r\n";
+
+        if (! fs.eof()) {
+            content += "\n";
+        }
     }
 
     return content;

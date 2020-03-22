@@ -52,20 +52,32 @@ HWND CScintilla::Create(HWND parent) {
             0, cs.lpCreateParams);
 #endif
 
+    this->SetStyle({STYLE_DEFAULT, Black, White, 10, "Consolas"});
+
     return wnd;
 }
 
 
+LRESULT CScintilla::SendCommand(UINT Msg, WPARAM wParam, LPARAM lParam) {
+    return this->SendMessage(Msg, wParam, lParam);
+}
+
+
+LRESULT CScintilla::SendCommand(UINT Msg, WPARAM wParam, LPARAM lParam) const {
+    return this->SendMessage(Msg, wParam, lParam);
+}
+
+
 void CScintilla::SetStyle(int style, COLORREF fore, COLORREF back, int size, const char *face) {
-    this->SendMessage(SCI_STYLESETFORE, style, fore);
-    this->SendMessage(SCI_STYLESETBACK, style, back);
+    this->SendCommand(SCI_STYLESETFORE, style, fore);
+    this->SendCommand(SCI_STYLESETBACK, style, back);
 
     if (size >= 1) {
-        this->SendMessage(SCI_STYLESETSIZE, style, size);
+        this->SendCommand(SCI_STYLESETSIZE, style, size);
     }
         
     if (face) {
-        this->SendMessage(SCI_STYLESETFONT, style, (LPARAM)face);
+        this->SendCommand(SCI_STYLESETFONT, style, (LPARAM)face);
     }
 }
 
@@ -132,32 +144,32 @@ void CScintilla::OnInitialUpdate() {
 */
 
 void CScintilla::SetText(const std::string &text) {
-    this->SendMessage(SCI_SETTEXT, 0, (LPARAM)text.c_str());
+    this->SendCommand(SCI_SETTEXT, 0, (LPARAM)text.c_str());
 }
 
 
 std::string CScintilla::GetText() const {
     std::string content;
-    const int length = (int)this->SendMessage(SCI_GETTEXTLENGTH) + 1;
+    const int length = (int)this->SendCommand(SCI_GETTEXTLENGTH) + 1;
     content.resize(length);
-    this->SendMessage(SCI_GETTEXT, length, (LPARAM)content.c_str());
+    this->SendCommand(SCI_GETTEXT, length, (LPARAM)content.c_str());
 
     return content;
 }
     
 
 void CScintilla::SetSavePoint() {
-    this->SendMessage(SCI_SETSAVEPOINT);
+    this->SendCommand(SCI_SETSAVEPOINT);
 }
 
 
 void CScintilla::EmptyUndoBuffer() {
-    this->SendMessage(SCI_EMPTYUNDOBUFFER);
+    this->SendCommand(SCI_EMPTYUNDOBUFFER);
 }
 
 
 void CScintilla::ClearAll() { 
-    this->SendMessage(SCI_CLEARALL);
+    this->SendCommand(SCI_CLEARALL);
 }
 
 
@@ -167,54 +179,67 @@ void CScintilla::SetFont(const std::string &name, const int size) {
 
 
 void CScintilla::SetTabWidth(const int spaces) {
-    this->SendMessage(SCI_SETUSETABS, 0);
-    this->SendMessage(SCI_SETTABWIDTH, spaces);
+    this->SendCommand(SCI_SETUSETABS, 0);
+    this->SendCommand(SCI_SETTABWIDTH, spaces);
 }
 
 
 void CScintilla::Undo() {
+    this->SendCommand(SCI_UNDO);
 }
     
 
 void CScintilla::Redo() {
-
+    this->SendCommand(SCI_REDO);
 }
 
 
 void CScintilla::Cut() {
-
+    this->SendCommand(SCI_CUT);
 }
 
     
 void CScintilla::Copy() {
+    this->SendCommand(SCI_COPY);
 }
 
 
 void CScintilla::Paste() {
+    this->SendCommand(SCI_PASTE);
+}
 
+
+void CScintilla::SetSel(int start, int end, BOOL _) {
+    this->SendCommand(SCI_SETSEL, start, end);
+}
+
+
+void CScintilla::GetSel(int &start, int &end) const {
+    start = (int)this->SendCommand(SCI_GETSELECTIONSTART);
+    end = (int)this->SendCommand(SCI_GETSELECTIONEND);
 }
 
 
 void CScintilla::SetMarginType(const int margin, const int type) {
-    this->SendMessage(SCI_SETMARGINTYPEN, margin, type);
+    this->SendCommand(SCI_SETMARGINTYPEN, margin, type);
 }
 
     
 void CScintilla::SetMarginWidth(const int margin, const int pixelWidth) {
-    this->SendMessage(SCI_SETMARGINWIDTHN, margin, pixelWidth);
+    this->SendCommand(SCI_SETMARGINWIDTHN, margin, pixelWidth);
 }
 
 
 int CScintilla::TextWidth(const int style, const std::string &text) {
-    return (int) this->SendMessage(SCI_TEXTWIDTH, style, (LPARAM)text.c_str());
+    return (int) this->SendCommand(SCI_TEXTWIDTH, style, (LPARAM)text.c_str());
 }
 
 
 void CScintilla::ApplyConfig(const ScintillaConfig &config) {
-    this->SendMessage(SCI_SETLEXER, config.lexer);
-    this->SendMessage(SCI_SETKEYWORDS, 0, (LPARAM)(config.keywords.c_str()));
-    this->SendMessage(SCI_SETUSETABS, config.useTabs?1:0);
-    this->SendMessage(SCI_SETTABWIDTH, config.tabWidth);
+    this->SendCommand(SCI_SETLEXER, config.lexer);
+    this->SendCommand(SCI_SETKEYWORDS, 0, (LPARAM)(config.keywords.c_str()));
+    this->SendCommand(SCI_SETUSETABS, config.useTabs?1:0);
+    this->SendCommand(SCI_SETTABWIDTH, config.tabWidth);
 
     for (const auto &style : config.styles) {
         this->SetStyle(style);

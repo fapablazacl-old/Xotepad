@@ -50,6 +50,8 @@ public:
 
     virtual BOOL OnCommand(WPARAM wparam, LPARAM lparam) override;
 
+    virtual LRESULT OnNotify(WPARAM wparam, LPARAM lparam) override;
+
     virtual void terminateApp() override;
 
 public:

@@ -54,6 +54,10 @@ public:
 
     virtual HWND Create(HWND parent) override;
 
+    LRESULT SendCommand(UINT Msg, WPARAM wParam = 0, LPARAM lParam = 0);
+
+    LRESULT SendCommand(UINT Msg, WPARAM wParam = 0, LPARAM lParam = 0) const;
+
     void SetStyle(int style, COLORREF fore, COLORREF back=White, int size=0, const char *face=nullptr);
     
     void SetStyle(const ScintillaStyle &style);
@@ -82,7 +86,6 @@ public:
 
     void ApplyConfig(const ScintillaConfig &config);
 
-    void SetSel(int, int, BOOL) {}
-    void GetSel(int, int) const {}
-    void SetFont(HFONT) {}
+    void SetSel(int start, int end, BOOL _);
+    void GetSel(int &start, int &end) const;
 };
