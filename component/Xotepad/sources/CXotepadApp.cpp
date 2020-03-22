@@ -2,10 +2,10 @@
 #include "CXotepadApp.hpp"
 
 CXotepadApp::CXotepadApp() {
-    hScintilla = ::LoadLibrary("SciLexer.DLL");
+    hScintilla = ::LoadLibrary(L"SciLexer.DLL");
 
     if (!hScintilla) {
-        MessageBox(NULL, "Couldn't load the Scintilla DLL Component", "Xotepad", MB_OK | MB_ICONERROR);
+        MessageBox(NULL, L"Couldn't load the Scintilla DLL Component", L"Xotepad", MB_OK | MB_ICONERROR);
     }
 }
 

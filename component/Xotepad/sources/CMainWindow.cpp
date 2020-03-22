@@ -1,11 +1,13 @@
 
 #include "CMainWindow.hpp"
 #include "MainWindowPresenter.hpp"
-#include <vector>
+#include "WindowsUtils.hpp"
 
+#include <vector>
+#include <wxx_taskdialog.h>
 
 void CMainWindow::setTitle(const std::string &title) {
-    SetTitle(title.c_str());
+    SetTitle(widen(title).c_str());
 }
 
 
@@ -20,19 +22,36 @@ std::string CMainWindow::getContent() const {
 
 
 DialogResult CMainWindow::showMessageBoxModal(const std::string &title, const std::string &message, const DialogButtons buttons, const DialogIcon icon) {
-    UINT type = 0;
+    std::wstring wtitle = widen(title);
+    std::wstring wmessage = widen(message);
 
+    CTaskDialog taskDialog;
+
+    taskDialog.SetWindowTitle(wtitle.c_str());
+    taskDialog.SetMainInstruction(wmessage.c_str());
+    
     switch (buttons) {
-        case DialogButtons::Ok: type |= MB_OK;
-        case DialogButtons::YesNo: type |= MB_YESNO;
-        case DialogButtons::YesNoCancel: type |= MB_YESNOCANCEL;
+        case DialogButtons::Ok: 
+            taskDialog.SetCommonButtons(TDCBF_OK_BUTTON); 
+            break;
+
+        case DialogButtons::YesNo: 
+            taskDialog.SetCommonButtons(TDCBF_YES_BUTTON | TDCBF_NO_BUTTON); 
+            break;
+
+        case DialogButtons::YesNoCancel: 
+            taskDialog.SetCommonButtons(TDCBF_YES_BUTTON | TDCBF_NO_BUTTON | TDCBF_CANCEL_BUTTON); 
+            break;
     }
 
     switch (icon) {
-        case DialogIcon::Question: type |= MB_ICONQUESTION;
+        case DialogIcon::Question: 
+            taskDialog.SetMainIcon(TD_INFORMATION_ICON); 
+            break;
     }
 
-    int result = MessageBox(message.c_str(), title.c_str(), type);
+    taskDialog.DoModal(this->GetHwnd());
+    int result = taskDialog.GetSelectedButtonID();
 
     switch (result) {
         case IDOK: return DialogResult::Ok;
@@ -84,7 +103,7 @@ std::optional<std::string> CMainWindow::showFilePickModal(FileDialog type, const
         
     CFileDialog fileDlg(type == FileDialog::Open ? TRUE : FALSE, NULL, 0, flags, filter);
 
-    fileDlg.SetTitle(title.c_str());
+    fileDlg.SetTitle(widen(title).c_str());
 
     if (fileDlg.DoModal(*this) == IDCANCEL) {
         return {};
@@ -92,12 +111,12 @@ std::optional<std::string> CMainWindow::showFilePickModal(FileDialog type, const
 
     CString fileName = fileDlg.GetPathName();
 
-    return std::string(fileName.c_str());
+    return narrow(fileName.c_str());
 }
 
 
 void CMainWindow::clearContent() {
-    editorView.SetWindowTextA("");
+    editorView.SetWindowText(L"");
 }
 
 
@@ -156,8 +175,10 @@ void CMainWindow::paste() {
 
 
 void CMainWindow::setFont(const Font &font) {
-    HFONT fontHandle = CreateFont(font.size,0,0,0,FW_DONTCARE,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,
-                CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH,TEXT(font.family.c_str()));
+    HFONT fontHandle = CreateFont(
+        font.size, 0, 0, 0, FW_DONTCARE, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
+        CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH, widen(font.family).c_str()
+    );
 
     if (fontHandle) {
         if (this->fontHandle) {
@@ -255,34 +276,34 @@ LRESULT CMainWindow::OnNotify(WPARAM wparam, LPARAM lparam) {
 
 void CMainWindow::setupMenuBar() {
     HMENU hFileMenu = CreateMenu();
-    ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_NEW, "&New\t Ctrl+N");
-    ::AppendMenu(hFileMenu, MF_SEPARATOR, 0, "");
-    ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_OPEN, "&Open\t Ctrl+O");
-    ::AppendMenu(hFileMenu, MF_SEPARATOR, 0, "");
-    ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_SAVE, "&Save\t Ctrl+S");
-    ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_SAVEAS, "Save &As");
-    ::AppendMenu(hFileMenu, MF_SEPARATOR, 0, "");
-    ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_EXIT, "&Exit\t Alt+F4");
+    ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_NEW, L"&New\t Ctrl+N");
+    ::AppendMenu(hFileMenu, MF_SEPARATOR, 0, L"");
+    ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_OPEN, L"&Open\t Ctrl+O");
+    ::AppendMenu(hFileMenu, MF_SEPARATOR, 0, L"");
+    ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_SAVE, L"&Save\t Ctrl+S");
+    ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_SAVEAS, L"Save &As");
+    ::AppendMenu(hFileMenu, MF_SEPARATOR, 0, L"");
+    ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_EXIT, L"&Exit\t Alt+F4");
 
     HMENU hEditMenu = CreateMenu();
-    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_UNDO, "&Undo\t Ctrl+Z");
-    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_REDO, "&Redo\t Ctrl+Shift+Z");
-    ::AppendMenu(hEditMenu, MF_SEPARATOR, 0, "");
-    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_CUT, "Cu&t\t Ctrl+X");
-    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_COPY, "&Copy\t Ctrl+C");
-    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_PASTE, "&Paste\t Ctrl+V");
-    ::AppendMenu(hEditMenu, MF_SEPARATOR, 0, "");
-    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_SELECTALL, "&Select All\t Ctrl+A");
-    ::AppendMenu(hEditMenu, MF_SEPARATOR, 0, "");
-    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_FINDREPLACE, "&Find & Replace ...\t Ctrl+F");
+    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_UNDO, L"&Undo\t Ctrl+Z");
+    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_REDO, L"&Redo\t Ctrl+Shift+Z");
+    ::AppendMenu(hEditMenu, MF_SEPARATOR, 0, L"");
+    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_CUT, L"Cu&t\t Ctrl+X");
+    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_COPY, L"&Copy\t Ctrl+C");
+    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_PASTE, L"&Paste\t Ctrl+V");
+    ::AppendMenu(hEditMenu, MF_SEPARATOR, 0, L"");
+    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_SELECTALL, L"&Select All\t Ctrl+A");
+    ::AppendMenu(hEditMenu, MF_SEPARATOR, 0, L"");
+    ::AppendMenu(hEditMenu, MF_STRING, IDM_EDIT_FINDREPLACE, L"&Find & Replace ...\t Ctrl+F");
 
     HMENU hHelpMenu = CreateMenu();
-    ::AppendMenu(hHelpMenu, MF_STRING, IDM_HELP_ABOUT, "&About ...\t F1");
+    ::AppendMenu(hHelpMenu, MF_STRING, IDM_HELP_ABOUT, L"&About ...\t F1");
 
     HMENU hMenuBar = CreateMenu();
-    ::AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hFileMenu, "&File");
-    ::AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hEditMenu, "&Edit");
-    ::AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hHelpMenu, "&Help");
+    ::AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hFileMenu, L"&File");
+    ::AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hEditMenu, L"&Edit");
+    ::AppendMenu(hMenuBar, MF_POPUP, (UINT_PTR)hHelpMenu, L"&Help");
 
     this->SetMenu(hMenuBar);
 

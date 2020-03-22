@@ -3,6 +3,10 @@
 set (SCINTILLA_INCLUDE_PATH "${SCINTILLA_INSTALL_PATH}/include")
 set (SCINTILLA_LIBRARY_PATH "${SCINTILLA_INSTALL_PATH}/lib")
 
+# Enable Unicode builds (do this just for Windows Apps and Libraries)
+add_definitions (-DUNICODE)
+add_definitions (-D_UNICODE)
+
 set (target "Xotepad")
 
 set (sources 
@@ -23,6 +27,8 @@ set (sources
 	"sources/FileService.hpp" 
 	"sources/CXotepadApp.cpp" 
 	"sources/CXotepadApp.hpp" 
+	"sources/WindowsUtils.cpp" 
+	"sources/WindowsUtils.hpp" 
 )
 
 add_executable(${target} WIN32 ${sources})
