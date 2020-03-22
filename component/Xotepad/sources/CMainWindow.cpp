@@ -103,7 +103,7 @@ void CMainWindow::undo() {
 
 
 void CMainWindow::redo() {
-    
+    editorView.Redo();
 }
 
 
@@ -133,8 +133,6 @@ void CMainWindow::setFont(const Font &font) {
     }
 
     this->fontHandle = fontHandle;
-
-    // editorView.SetFont(this->fontHandle);
 }
 
 
