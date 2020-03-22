@@ -1,9 +1,12 @@
 
 #include "CMainWindow.hpp"
 #include "MainWindowPresenter.hpp"
+#include "CXotepadApp.hpp"
+
+#include <Scintilla.h>
 
 int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-    CWinApp myApp;
+    CXotepadApp myApp;
 	
     MainWindowPresenter presenter;
     CMainWindow mainWindow(&presenter);

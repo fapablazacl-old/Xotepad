@@ -1,4 +1,8 @@
 
+# Scintilla
+set (SCINTILLA_INCLUDE_PATH "${SCINTILLA_INSTALL_PATH}/include")
+set (SCINTILLA_LIBRARY_PATH "${SCINTILLA_INSTALL_PATH}/lib")
+
 set (target "Xotepad")
 
 set (sources 
@@ -22,5 +26,8 @@ set (sources
 )
 
 add_executable(${target} WIN32 ${sources})
+
+target_include_directories(${target} PRIVATE ${WIN32PP_INCLUDE_PATH} ${SCINTILLA_INCLUDE_PATH})
+target_link_directories(${target} PRIVATE ${SCINTILLA_LIBRARY_PATH})
 
 target_link_libraries(${target} comctl32)

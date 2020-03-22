@@ -3,6 +3,8 @@
 
 #include <wxx_wincore.h>
 #include <wxx_controls.h>
+#include <Scintilla.h>
+#include <SciLexer.h>
 
 class CEditorView : public CEdit {
 public:
