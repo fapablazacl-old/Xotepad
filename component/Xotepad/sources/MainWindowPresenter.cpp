@@ -63,8 +63,12 @@ DialogUserOutcome MainWindowPresenter::handleFileSave() {
 
 std::vector<FileFilter> enumerateFilters() {
     return {
-        FileFilter{"All Files", {"*.*"}},
-        FileFilter{"C/C++ Files", {"*.cpp", "*.c"}}
+        FileFilter{"C/C++ Files", {"*.c", "*.cpp", "*.cxx", "*.c++", "*.cc", "*.h", "*.hpp", "*.hxx", "*.h++", "*.hh"}},
+        FileFilter{"OpenGL Shader Files", {"*.glsl", "*.vert", "*.frag"}},
+        FileFilter{"OpenCL C Files", {"*.cl"}},
+        FileFilter{"Assembly Files", {"*.asm"}},
+        FileFilter{"CMake Files", {"CMakeLists.txt", "*.cmake", "CMakeCache.txt"}},
+        FileFilter{"All Files", {"*.*"}}
     };
 }
 
