@@ -91,7 +91,7 @@ void CMainWindow::clearSelection() {
 
 
 TextSelection CMainWindow::getSelection() const {
-    TextSelection selection;
+    TextSelection selection = {0, 0};
 
     editorView.GetSel(selection.start, selection.end);
     

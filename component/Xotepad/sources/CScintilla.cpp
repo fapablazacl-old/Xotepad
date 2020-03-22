@@ -1,23 +1,61 @@
 
 #include "CScintilla.hpp"
 
-void CScintilla::PreRegisterClass(WNDCLASS& wc) {
-    wc.lpszClassName = _T("CScintilla");
-}
 
-
-void CScintilla::PreCreate(CREATESTRUCT& cs) {
-    cs.style = cs.style | WS_VSCROLL | WS_HSCROLL | ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_WANTRETURN;
-}
-
-
-/*
-void CScintilla::PreCreate(CREATESTRUCT &cs) {
+void CScintilla::PreCreate(CREATESTRUCT& cs) {    
     cs.style = WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_CLIPCHILDREN;
-    cs.lpszClass = "CScintilla";
 }
-*/
-    
+
+
+HWND CScintilla::Create(HWND parent) {
+    CREATESTRUCT cs;
+    ZeroMemory(&cs, sizeof(cs));
+
+    // Set the WNDCLASS parameters
+    cs.lpszClass = _T("Scintilla");
+
+    // Set a reasonable default window style
+    DWORD dwOverlappedStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+    cs.style = WS_VISIBLE | ((parent)? WS_CHILD : dwOverlappedStyle );
+
+    // Set a reasonable default window position
+    if (NULL == parent)
+    {
+        cs.x  = CW_USEDEFAULT;
+        cs.cx = CW_USEDEFAULT;
+        cs.y  = CW_USEDEFAULT;
+        cs.cy = CW_USEDEFAULT;
+    }
+
+    // Allow the CREATESTRUCT parameters to be modified
+    PreCreate(cs);
+
+    DWORD style = cs.style & ~WS_VISIBLE;
+    HWND wnd;
+
+    // Create the window
+#ifndef _WIN32_WCE
+    wnd = CreateEx(cs.dwExStyle, cs.lpszClass, cs.lpszName, style,
+            cs.x, cs.y, cs.cx, cs.cy, parent,
+            cs.hMenu, cs.lpCreateParams);
+
+    if (cs.style & WS_VISIBLE)
+    {
+        if      (cs.style & WS_MAXIMIZE) ShowWindow(SW_MAXIMIZE);
+        else if (cs.style & WS_MINIMIZE) ShowWindow(SW_MINIMIZE);
+        else    ShowWindow();
+    }
+
+#else
+    wnd = CreateEx(cs.dwExStyle, cs.lpszClass, cs.lpszName, cs.style,
+            cs.x, cs.y, cs.cx, cs.cy, parent,
+            0, cs.lpCreateParams);
+#endif
+
+    return wnd;
+}
+
+
 void CScintilla::SetStyle(int style, COLORREF fore, COLORREF back, int size, const char *face) {
     this->SendMessage(SCI_STYLESETFORE, style, fore);
     this->SendMessage(SCI_STYLESETBACK, style, back);
@@ -179,10 +217,10 @@ void CScintilla::ApplyConfig(const ScintillaConfig &config) {
     this->SendMessage(SCI_SETTABWIDTH, config.tabWidth);
 
     for (const auto &style : config.styles) {
-            this->SetStyle(style);
+        this->SetStyle(style);
     }
 
     for (const auto &pair : config.colors) {
-            this->SetStyle(pair.first, pair.second);
+        this->SetStyle(pair.first, pair.second);
     }
 }

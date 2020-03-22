@@ -43,9 +43,16 @@ struct ScintillaConfig {
 
 class CScintilla : public CWnd {
 public:
-    virtual void PreRegisterClass(WNDCLASS& wc) override;
+    CScintilla() {}
+    virtual ~CScintilla() {}
+
+    CScintilla(const CScintilla&) = delete;
+
+    CScintilla& operator= (const CScintilla&) = delete;
 
     virtual void PreCreate(CREATESTRUCT& cs) override;
+
+    virtual HWND Create(HWND parent) override;
 
     void SetStyle(int style, COLORREF fore, COLORREF back=White, int size=0, const char *face=nullptr);
     
@@ -74,4 +81,8 @@ public:
     int TextWidth(const int style, const std::string &text);
 
     void ApplyConfig(const ScintillaConfig &config);
+
+    void SetSel(int, int, BOOL) {}
+    void GetSel(int, int) const {}
+    void SetFont(HFONT) {}
 };

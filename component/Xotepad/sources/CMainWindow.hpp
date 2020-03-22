@@ -13,6 +13,7 @@
 
 #include "MainWindow.hpp"
 #include "CEditorView.hpp"
+#include "CScintilla.hpp"
 
 class CMainWindow : public CFrame, public MainWindow {
 private:
@@ -90,6 +91,7 @@ private:
     void setupMenuBar();
 
 private:
-    CEditorView editorView;
+    // CEditorView editorView;
+    CScintilla editorView;
     HFONT fontHandle = NULL;
 };
