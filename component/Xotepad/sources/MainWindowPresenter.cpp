@@ -61,8 +61,18 @@ DialogUserOutcome MainWindowPresenter::handleFileSave() {
 }
 
 
+std::vector<FileFilter> enumerateFilters() {
+    return {
+        FileFilter{"All Files", {"*.*"}},
+        FileFilter{"C/C++ Files", {"*.cpp", "*.c"}}
+    };
+}
+
+
 DialogUserOutcome MainWindowPresenter::handleFileSaveAs() {
-    if (auto result = view->showFilePickModal(FileDialog::Save, appTitle + " - Save File ..."); result) {
+    const std::vector<FileFilter> filters = enumerateFilters();
+
+    if (auto result = view->showFilePickModal(FileDialog::Save, appTitle + " - Save File ...", filters); result) {
         const std::string fileName = *result;
         const std::string content = view->getContent();
 
@@ -91,7 +101,9 @@ void MainWindowPresenter::handleFileOpen() {
         return;
     }
 
-    if (auto fileName = view->showFilePickModal(FileDialog::Open, appTitle + " - Open File ...")) {
+    const std::vector<FileFilter> filters = enumerateFilters();
+
+    if (auto fileName = view->showFilePickModal(FileDialog::Open, appTitle + " - Open File ...", filters)) {
         this->loadFile(*fileName);
     }
 }

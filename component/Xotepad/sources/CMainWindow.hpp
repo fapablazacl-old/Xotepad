@@ -65,7 +65,7 @@ public:
 
     virtual DialogResult showMessageBoxModal(const std::string &title, const std::string &message, const DialogButtons buttons, const DialogIcon icon) override;
 
-    virtual std::optional<std::string> showFilePickModal(FileDialog type, const std::string &title) override;
+    virtual std::optional<std::string> showFilePickModal(FileDialog type, const std::string &title, const std::vector<FileFilter> &filters) override;
 
     virtual void setSelection(const TextSelection &selection) override;
 

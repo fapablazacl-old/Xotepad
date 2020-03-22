@@ -45,8 +45,41 @@ DialogResult CMainWindow::showMessageBoxModal(const std::string &title, const st
 }
 
 
-std::optional<std::string> CMainWindow::showFilePickModal(FileDialog type, const std::string &title) {
-    const CString filter = _T("All Files (*.*)|*.*||");
+CString ToDialogFilterString(const std::vector<std::string> &wildcards) {
+    CString result;
+
+    for (int i=0; i<wildcards.size(); i++) {
+        result += "|";
+        result += wildcards[i].c_str();
+        result += "|";
+    }
+
+    return result;
+}
+
+
+CString ToDialogFilterString(const FileFilter &filter) {
+    return filter.caption.c_str() + ToDialogFilterString(filter.wildcards);
+}
+
+
+CString ToDialogFilterString(const std::vector<FileFilter> &filters) {
+    CString result;
+
+    for (int i=0; i<filters.size(); i++) {
+        result += ToDialogFilterString(filters[i]);
+
+        if (i == filters.size() - 1) {
+            result += "|";
+        }
+    }
+
+    return result;
+}
+
+
+std::optional<std::string> CMainWindow::showFilePickModal(FileDialog type, const std::string &title, const std::vector<FileFilter> &filters) {
+    const CString filter = ToDialogFilterString(filters);
     const DWORD flags = OFN_LONGNAMES | OFN_PATHMUSTEXIST  | OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_EXPLORER | OFN_ENABLESIZING;
         
     CFileDialog fileDlg(type == FileDialog::Open ? TRUE : FALSE, NULL, 0, flags, filter);

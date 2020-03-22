@@ -3,6 +3,7 @@
 
 #include <string>
 #include <optional>
+#include <vector>
 
 
 enum class DialogResult {
@@ -43,6 +44,12 @@ struct Font {
 };
 
 
+struct FileFilter {
+    std::string caption;
+    std::vector<std::string> wildcards;
+};
+
+
 class MainWindowPresenter;
 class MainWindow {
 public:
@@ -62,7 +69,7 @@ public:
 
     virtual DialogResult showMessageBoxModal(const std::string &title, const std::string &message, const DialogButtons buttons, const DialogIcon icon) = 0;
 
-    virtual std::optional<std::string> showFilePickModal(FileDialog type, const std::string &title) = 0;
+    virtual std::optional<std::string> showFilePickModal(FileDialog type, const std::string &title, const std::vector<FileFilter> &filters) = 0;
 
     virtual void terminateApp() = 0;
 
