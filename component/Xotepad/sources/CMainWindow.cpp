@@ -21,6 +21,7 @@ std::string CMainWindow::getContent() const {
 }
 
 
+/*
 DialogResult CMainWindow::showMessageBoxModal(const std::string &title, const std::string &message, const DialogButtons buttons, const DialogIcon icon) {
     std::wstring wtitle = widen(title);
     std::wstring wmessage = widen(message);
@@ -62,15 +63,55 @@ DialogResult CMainWindow::showMessageBoxModal(const std::string &title, const st
     
     return DialogResult::Cancel;
 }
+*/
+
+ DialogResult CMainWindow::showMessageBoxModal(const std::string &title, const std::string &message, const DialogButtons buttons, const DialogIcon icon) {
+    UINT type = 0;
+    std::wstring wtitle = widen(title);
+    std::wstring wmessage = widen(message);
+
+    switch (buttons) {
+        case DialogButtons::Ok: 
+            type |= MB_OK; 
+            break;
+
+        case DialogButtons::YesNo: 
+            type |= MB_YESNO; 
+            break;
+
+        case DialogButtons::YesNoCancel: 
+            type |= MB_YESNOCANCEL; 
+            break;
+    }
+
+    switch (icon) {
+        case DialogIcon::Question: 
+            type |= MB_ICONQUESTION;
+            break;
+    }
+
+    int result = MessageBox(wmessage.c_str(), wtitle.c_str(), type);
+
+    switch (result) {
+        case IDOK: return DialogResult::Ok;
+        case IDYES: return DialogResult::Yes;
+        case IDNO: return DialogResult::No;
+        case IDCANCEL: return DialogResult::Cancel;
+    }
+
+    return DialogResult::Cancel;
+}
 
 
 CString ToDialogFilterString(const std::vector<std::string> &wildcards) {
     CString result;
 
     for (int i=0; i<wildcards.size(); i++) {
-        result += "|";
         result += wildcards[i].c_str();
-        result += "|";
+        
+        if (i < wildcards.size() - 1) {
+            result += ";";
+        }
     }
 
     return result;
@@ -78,19 +119,16 @@ CString ToDialogFilterString(const std::vector<std::string> &wildcards) {
 
 
 CString ToDialogFilterString(const FileFilter &filter) {
-    return filter.caption.c_str() + ToDialogFilterString(filter.wildcards);
+    return filter.caption.c_str() + CString("|") + ToDialogFilterString(filter.wildcards);
 }
 
 
 CString ToDialogFilterString(const std::vector<FileFilter> &filters) {
     CString result;
 
-    for (int i=0; i<filters.size(); i++) {
-        result += ToDialogFilterString(filters[i]);
-
-        if (i == filters.size() - 1) {
-            result += "|";
-        }
+    for (const FileFilter &filter : filters) {
+        result += ToDialogFilterString(filter);
+        result += "|";
     }
 
     return result;
@@ -100,7 +138,7 @@ CString ToDialogFilterString(const std::vector<FileFilter> &filters) {
 std::optional<std::string> CMainWindow::showFilePickModal(FileDialog type, const std::string &title, const std::vector<FileFilter> &filters) {
     const CString filter = ToDialogFilterString(filters);
     const DWORD flags = OFN_LONGNAMES | OFN_PATHMUSTEXIST  | OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_EXPLORER | OFN_ENABLESIZING;
-        
+
     CFileDialog fileDlg(type == FileDialog::Open ? TRUE : FALSE, NULL, 0, flags, filter);
 
     fileDlg.SetTitle(widen(title).c_str());
