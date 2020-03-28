@@ -73,41 +73,6 @@ std::vector<FileFilter> enumerateFilters() {
 }
 
 
-bool wildcard_match(const char * wildcard, char * const name) {
-    const size_t len = std::strlen(wildcard);
-
-    char *ch = name;
-
-    for (size_t i=0; i<len; i++) {
-        const char wc_token = wildcard[i];
-
-        switch (wc_token) {
-        case '?':
-            if (*ch == '\0') {
-                return false;
-            }
-            ++ch;
-
-            break;
-
-        case '*':
-
-            break;
-
-        default:
-            if (*ch != wc_token) {
-                return false;
-            }
-            ++ch;
-
-            break;
-        }
-    }
-
-    return *ch == '\0';
-}
-
-
 FileFilter matchFileFilter(const std::vector<FileFilter> &filters, const std::string &fileName) {
     for (const FileFilter &filter : filters) {
         for (const std::string &wildcard : filter.wildcards) {
