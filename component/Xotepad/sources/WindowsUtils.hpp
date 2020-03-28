@@ -1,8 +1,6 @@
 
 #pragma once 
 
-#include <locale>
-#include <codecvt>
 #include <string>
 
 extern std::wstring widen(const std::string &src);

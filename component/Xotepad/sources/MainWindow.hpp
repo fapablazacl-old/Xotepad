@@ -45,8 +45,16 @@ struct Font {
 
 
 struct FileFilter {
+    std::string id;
     std::string caption;
     std::vector<std::string> wildcards;
+};
+
+
+enum class Lexer {
+    Text,
+    Clike,
+    CMake
 };
 
 
@@ -94,6 +102,8 @@ public:
     virtual void setFont(const Font &font) = 0;
 
     virtual Font getFont() const = 0;
+
+    virtual void applyLexer(const Lexer &value) = 0;
 
 protected:
     MainWindowPresenter *getPresenter() {

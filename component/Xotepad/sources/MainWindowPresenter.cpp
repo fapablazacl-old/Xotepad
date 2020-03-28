@@ -2,7 +2,7 @@
 #include "MainWindowPresenter.hpp"
 #include "MainWindow.hpp"
 #include "FileService.hpp"
-
+#include <boost/filesystem/path.hpp>
 
 void MainWindowPresenter::attachView(MainWindow *view) {
     this->view = view;
@@ -63,13 +63,82 @@ DialogUserOutcome MainWindowPresenter::handleFileSave() {
 
 std::vector<FileFilter> enumerateFilters() {
     return {
-        FileFilter{"C/C++ Files", {"*.c", "*.cpp", "*.cxx", "*.c++", "*.cc", "*.h", "*.hpp", "*.hxx", "*.h++", "*.hh"}},
-        FileFilter{"OpenGL Shader Files", {"*.glsl", "*.vert", "*.frag"}},
-        FileFilter{"OpenCL C Files", {"*.cl"}},
-        FileFilter{"Assembly Files", {"*.asm"}},
-        FileFilter{"CMake Files", {"CMakeLists.txt", "*.cmake", "CMakeCache.txt"}},
-        FileFilter{"All Files", {"*.*"}}
+        FileFilter{"cpp", "C/C++ Files", {"*.c", "*.cpp", "*.cxx", "*.c++", "*.cc", "*.h", "*.hpp", "*.hxx", "*.h++", "*.hh"}},
+        FileFilter{"gl", "OpenGL Shader Files", {"*.glsl", "*.vert", "*.frag"}},
+        FileFilter{"cl", "OpenCL C Files", {"*.cl"}},
+        FileFilter{"asm", "Assembly Files", {"*.asm"}},
+        FileFilter{"cmake", "CMake Files", {"CMakeLists.txt", "*.cmake", "CMakeCache.txt"}},
+        FileFilter{"", "All Files", {"*.*"}}
     };
+}
+
+
+bool wildcard_match(const char * wildcard, char * const name) {
+    const size_t len = std::strlen(wildcard);
+
+    char *ch = name;
+
+    for (size_t i=0; i<len; i++) {
+        const char wc_token = wildcard[i];
+
+        switch (wc_token) {
+        case '?':
+            if (*ch == '\0') {
+                return false;
+            }
+            ++ch;
+
+            break;
+
+        case '*':
+
+            break;
+
+        default:
+            if (*ch != wc_token) {
+                return false;
+            }
+            ++ch;
+
+            break;
+        }
+    }
+
+    return *ch == '\0';
+}
+
+
+FileFilter matchFileFilter(const std::vector<FileFilter> &filters, const std::string &fileName) {
+    for (const FileFilter &filter : filters) {
+        for (const std::string &wildcard : filter.wildcards) {
+            if (wildcard.find('*') == std::string::npos) {
+                if (wildcard == fileName) {
+                    return filter;
+                }
+            } else {
+                // extract ext and base from fileName (requires boost!)
+                std::string fileTitle = boost::filesystem::path(fileName).stem().string();
+                std::string fileExtension = boost::filesystem::path(fileName).extension().string();
+
+                const int pos = wildcard.find('.');
+
+                if (pos == std::string::npos) {
+                    const std::string part1 = wildcard.substr(0, pos);
+                    const std::string part2 = wildcard.substr(pos);
+                } else {
+                    
+                }
+            }
+        }
+    }
+}
+
+
+Lexer fileType2Lexer(const std::string &fileType) {
+    if (fileType == "cpp") return Lexer::Clike;
+    if (fileType == "cmake") return Lexer::CMake;
+    
+    return Lexer::Text;
 }
 
 

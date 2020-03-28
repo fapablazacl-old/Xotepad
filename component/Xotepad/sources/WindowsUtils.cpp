@@ -1,6 +1,9 @@
 
 #include "WindowsUtils.hpp"
 
+#include <locale>
+#include <codecvt>
+
 std::wstring widen(const std::string &src) {
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
     std::wstring result = converter.from_bytes(src);

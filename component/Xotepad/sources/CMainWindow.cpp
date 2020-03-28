@@ -6,6 +6,7 @@
 #include <vector>
 #include <wxx_taskdialog.h>
 
+
 void CMainWindow::setTitle(const std::string &title) {
     SetTitle(widen(title).c_str());
 }
@@ -64,6 +65,7 @@ DialogResult CMainWindow::showMessageBoxModal(const std::string &title, const st
     return DialogResult::Cancel;
 }
 */
+
 
  DialogResult CMainWindow::showMessageBoxModal(const std::string &title, const std::string &message, const DialogButtons buttons, const DialogIcon icon) {
     UINT type = 0;
@@ -230,6 +232,23 @@ void CMainWindow::setFont(const Font &font) {
 
 Font CMainWindow::getFont() const {
     return {"", 12};
+}
+
+
+void CMainWindow::applyLexer(const Lexer &value) {
+    switch (value) {
+    case Lexer::Clike: 
+        editorView.SendCommand(SCI_SETLEXER, SCLEX_CPP);
+        break;
+
+    case Lexer::CMake:
+        editorView.SendCommand(SCI_SETLEXER, SCLEX_CMAKE);
+        break;
+
+    default:
+        editorView.SendCommand(SCI_SETLEXER, SCLEX_NULL);
+        break;
+    }
 }
 
 
