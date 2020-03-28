@@ -37,36 +37,47 @@ std::string narrow(const wchar_t *src) {
 }
 
 
-bool wildcard_match(const char * wildcard, char * const name) {
-    const size_t len = std::strlen(wildcard);
+bool wildcard_match(const char *pattern, const char *text) {
+    const size_t pattern_len = std::strlen(pattern);
+    const char *text_ptr = text;
 
-    char *ch = name;
+    for (size_t i=0; i<pattern_len; i++) {
+        const char pattern_char = pattern[i];
 
-    for (size_t i=0; i<len; i++) {
-        const char wc_token = wildcard[i];
-
-        switch (wc_token) {
+        switch (pattern_char) {
         case '?':
-            if (*ch == '\0') {
+            if (*text_ptr == '\0') {
                 return false;
             }
-            ++ch;
+            ++text_ptr;
 
             break;
 
-        case '*':
+        case '*': {
+            if (*(pattern + i + 1) == '\0') {
+                return true;
+            }
 
-            break;
+            const std::size_t str_len = std::strlen(text_ptr);
+
+            for (int j=0; j<str_len; j++) {
+                if (wildcard_match( &pattern[i + 1], (text_ptr + 1) )) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         default:
-            if (*ch != wc_token) {
+            if (*text_ptr != pattern_char) {
                 return false;
             }
-            ++ch;
+            ++text_ptr;
 
             break;
         }
     }
 
-    return *ch == '\0';
+    return *text_ptr == '\0';
 }

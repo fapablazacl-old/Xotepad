@@ -11,4 +11,4 @@ extern std::string narrow(const std::wstring &src);
 
 extern std::string narrow(const wchar_t *src);
 
-extern bool wildcard_match(const char * wildcard, char * const name);
+extern bool wildcard_match(const char *pattern, const char *text);
