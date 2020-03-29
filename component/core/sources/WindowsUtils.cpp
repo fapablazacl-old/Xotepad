@@ -54,16 +54,16 @@ bool wildcard_match(const char *pattern, const char *text) {
             break;
 
         case '*': {
-            if (*(pattern + i + 1) == '\0') {
+            const char pattern_next_char = pattern[i + 1];
+
+            if (pattern_next_char == '\0') {
                 return true;
             }
 
-            const std::size_t str_len = std::strlen(text_ptr);
-
-            for (int j=0; j<str_len; j++) {
-                if (wildcard_match( &pattern[i + 1], (text_ptr + 1) )) {
-                    return true;
-                }
+            if (pattern_next_char == *(text_ptr + 1)) {
+                return wildcard_match( &pattern[i + 1], (text_ptr + 1) );
+            } else {
+                return wildcard_match( &pattern[i], (text_ptr + 1) );
             }
 
             return false;
