@@ -236,9 +236,61 @@ Font CMainWindow::getFont() const {
 
 
 void CMainWindow::applyLexer(const Lexer &value) {
+    static const char* cpp_keywords =
+		"alignas alignof and and_eq asm atomic_cancel atomic_commit atomic_noexcept auto bitand bitor bool break case catch char "
+		"char16_t char32_t class compl concept const constexpr const_cast continue decltype default delete do "
+		"double dynamic_cast else enum explicit export extern false float for friend goto if inline int import long "
+		"module mutable namespace new noexcept not not_eq nullptr operator or or_eq private protected public "
+		"register reinterpret_cast requires return short signed sizeof static static_assert static_cast struct "
+		"switch synchronized template this thread_local "
+		"throw true try typedef typeid typename union unsigned "
+		"using virtual void volatile wchar_t while xor xor_eq";
+
+    static std::map<int, COLORREF> colors = {
+        {SCE_C_COMMENT, RGB(0x00, 0x80, 0x00)}, 
+        {SCE_C_COMMENTLINE, RGB(0x00, 0x80, 0x00)}, 
+        {SCE_C_COMMENTDOC, RGB(0x00, 0x80, 0x00)}, 
+        {SCE_C_NUMBER, RGB(0x00, 0x00, 0x00)}, 
+        {SCE_C_WORD, RGB(0x00, 0x00, 0xFF)}, 
+        {SCE_C_STRING, RGB(0x80, 0x00, 0x00)}, 
+        {SCE_C_CHARACTER, RGB(0x80, 0x00, 0x00)}, 
+        {SCE_C_UUID, RGB(0x00, 0x00, 0x00)}, 
+        {SCE_C_PREPROCESSOR, RGB(0xA0, 0x00, 0xFF)}, 
+        {SCE_C_OPERATOR, RGB(0x00, 0x00, 0x00)}, 
+        {SCE_C_IDENTIFIER, RGB(0x00, 0x00, 0x00)}, 
+        {SCE_C_STRINGEOL, RGB(0x00, 0x00, 0x00)}, 
+        {SCE_C_VERBATIM, RGB(0x00, 0x00, 0x00)}, 
+        {SCE_C_REGEX, RGB(0x00, 0x00, 0x00)}, 
+        {SCE_C_COMMENTLINEDOC, RGB(0x00, 0x00, 0x00)}, 
+        {SCE_C_WORD2, RGB(0x00, 0x00, 0x00)}, 
+        {SCE_C_COMMENTDOCKEYWORD, RGB(0x00, 0x00, 0x00)}, 
+        {SCE_C_COMMENTDOCKEYWORDERROR, RGB(0x00, 0x00, 0x00)}, 
+        {SCE_C_GLOBALCLASS, RGB(0x00, 0x00, 0x00)}, 
+        {SCE_C_STRINGRAW, RGB(0x00, 0x00, 0x00)}, 
+        {SCE_C_TRIPLEVERBATIM, RGB(0x00, 0x00, 0x00)}, 
+        {SCE_C_HASHQUOTEDSTRING, RGB(0x00, 0x00, 0x00)}, 
+        {SCE_C_PREPROCESSORCOMMENT, RGB(0x00, 0x00, 0x00)}, 
+        {SCE_C_PREPROCESSORCOMMENTDOC, RGB(0x00, 0x00, 0x00)}, 
+        {SCE_C_USERLITERAL, RGB(0x00, 0x00, 0x00)}, 
+        {SCE_C_TASKMARKER, RGB(0x00, 0x00, 0x00)}, 
+        {SCE_C_ESCAPESEQUENCE, RGB(0x00, 0x00, 0x00)}
+    };
+
     switch (value) {
     case Lexer::Clike: 
+        editorView.SendCommand(SCI_STYLECLEARALL);
         editorView.SendCommand(SCI_SETLEXER, SCLEX_CPP);
+        editorView.SendCommand(SCI_SETKEYWORDS, 0, (LPARAM)(cpp_keywords));
+        
+        for (auto styleIt=colors.begin(); styleIt!=colors.end(); styleIt++) {
+            editorView.SendCommand(SCI_STYLESETFORE, styleIt->first, styleIt->second);
+        }
+
+        editorView.SendCommand(SCI_STYLESETBOLD, SCE_C_WORD, 1);
+        editorView.SendCommand(SCI_STYLESETBOLD, SCE_C_WORD2, 1);
+        editorView.SendCommand(SCI_SETTABWIDTH, 4);
+        editorView.SendCommand(SCI_SETUSETABS, 0);
+
         break;
 
     case Lexer::CMake:

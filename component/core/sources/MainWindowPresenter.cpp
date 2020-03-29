@@ -88,7 +88,7 @@ boost::optional<FileFilter> matchFileFilter(const std::vector<FileFilter> &filte
 
 
 Lexer fileType2Lexer(const std::string &fileType) {
-    if (fileType == "cpp" || fileType == "gl" || fileType == "cl") {
+    if (fileType == "c++" || fileType == "gl" || fileType == "cl") {
         return Lexer::Clike;
     }
 
