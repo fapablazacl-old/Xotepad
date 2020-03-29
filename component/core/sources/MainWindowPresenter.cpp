@@ -170,7 +170,12 @@ void MainWindowPresenter::loadFile(const std::string &fileName) {
     this->documentFileName = fileName;
     this->documentDirty = false;
     
+    auto fileFilter = matchFileFilter(enumerateFilters(), boost::filesystem::path(fileName).filename().string());
+    auto lexer = fileType2Lexer(fileFilter->id);
+
+    view->applyLexer(lexer);
     view->setContent(content);
+
     this->updateTitle();
 }
 
