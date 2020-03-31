@@ -235,55 +235,71 @@ Font CMainWindow::getFont() const {
 }
 
 
-void CMainWindow::applyLexer(const Lexer &value) {
-    static const char* cpp_keywords =
-		"alignas alignof and and_eq asm atomic_cancel atomic_commit atomic_noexcept auto bitand bitor bool break case catch char "
-		"char16_t char32_t class compl concept const constexpr const_cast continue decltype default delete do "
-		"double dynamic_cast else enum explicit export extern false float for friend goto if inline int import long "
-		"module mutable namespace new noexcept not not_eq nullptr operator or or_eq private protected public "
-		"register reinterpret_cast requires return short signed sizeof static static_assert static_cast struct "
-		"switch synchronized template this thread_local "
-		"throw true try typedef typeid typename union unsigned "
-		"using virtual void volatile wchar_t while xor xor_eq";
+int convertToken(const int lexer, const int token) {
+    switch (lexer) {
+    case SCLEX_CPP:
+        switch (token) {
+        case CLIKE_COMMENT: return SCE_C_COMMENT;
+        case CLIKE_COMMENTLINE: return SCE_C_COMMENTLINE;
+        case CLIKE_COMMENTDOC: return SCE_C_COMMENTLINEDOC;
+        case CLIKE_NUMBER: return SCE_C_NUMBER;
+        case CLIKE_WORD: return SCE_C_WORD;
+        case CLIKE_STRING: return SCE_C_STRING;
+        case CLIKE_CHARACTER: return SCE_C_CHARACTER;
+        case CLIKE_UUID: return SCE_C_UUID;
+        case CLIKE_PREPROCESSOR: return SCE_C_PREPROCESSOR;
+        case CLIKE_OPERATOR: return SCE_C_OPERATOR;
+        case CLIKE_IDENTIFIER: return SCE_C_IDENTIFIER;
+        case CLIKE_STRINGEOL: return SCE_C_STRINGEOL;
+        case CLIKE_VERBATIM: return SCE_C_VERBATIM;
+        case CLIKE_REGEX: return SCE_C_REGEX;
+        case CLIKE_COMMENTLINEDOC: return SCE_C_COMMENTLINEDOC;
+        case CLIKE_WORD2: return SCE_C_WORD2;
+        case CLIKE_COMMENTDOCKEYWORD: return SCE_C_COMMENTDOCKEYWORD;
+        case CLIKE_COMMENTDOCKEYWORDERROR: return SCE_C_COMMENTDOCKEYWORDERROR;
+        case CLIKE_GLOBALCLASS: return SCE_C_GLOBALCLASS;
+        case CLIKE_STRINGRAW: return SCE_C_STRINGRAW;
+        case CLIKE_TRIPLEVERBATIM: return SCE_C_TRIPLEVERBATIM;
+        case CLIKE_HASHQUOTEDSTRING: return SCE_C_HASHQUOTEDSTRING;
+        case CLIKE_PREPROCESSORCOMMENT: return SCE_C_PREPROCESSORCOMMENT;
+        case CLIKE_PREPROCESSORCOMMENTDOC: return SCE_C_PREPROCESSORCOMMENTDOC;
+        case CLIKE_USERLITERAL: return SCE_C_USERLITERAL;
+        case CLIKE_TASKMARKER: return SCE_C_TASKMARKER;
+        case CLIKE_ESCAPESEQUENCE: return SCE_C_ESCAPESEQUENCE;
+        }
+    }
 
-    static std::map<int, COLORREF> colors = {
-        {SCE_C_COMMENT, RGB(0x00, 0x80, 0x00)}, 
-        {SCE_C_COMMENTLINE, RGB(0x00, 0x80, 0x00)}, 
-        {SCE_C_COMMENTDOC, RGB(0x00, 0x80, 0x00)}, 
-        {SCE_C_NUMBER, RGB(0x00, 0x00, 0x00)}, 
-        {SCE_C_WORD, RGB(0x00, 0x00, 0xFF)}, 
-        {SCE_C_STRING, RGB(0x80, 0x00, 0x00)}, 
-        {SCE_C_CHARACTER, RGB(0x80, 0x00, 0x00)}, 
-        {SCE_C_UUID, RGB(0x00, 0x00, 0x00)}, 
-        {SCE_C_PREPROCESSOR, RGB(0xA0, 0x00, 0xFF)}, 
-        {SCE_C_OPERATOR, RGB(0x00, 0x00, 0x00)}, 
-        {SCE_C_IDENTIFIER, RGB(0x00, 0x00, 0x00)}, 
-        {SCE_C_STRINGEOL, RGB(0x00, 0x00, 0x00)}, 
-        {SCE_C_VERBATIM, RGB(0x00, 0x00, 0x00)}, 
-        {SCE_C_REGEX, RGB(0x00, 0x00, 0x00)}, 
-        {SCE_C_COMMENTLINEDOC, RGB(0x00, 0x00, 0x00)}, 
-        {SCE_C_WORD2, RGB(0x00, 0x00, 0x00)}, 
-        {SCE_C_COMMENTDOCKEYWORD, RGB(0x00, 0x00, 0x00)}, 
-        {SCE_C_COMMENTDOCKEYWORDERROR, RGB(0x00, 0x00, 0x00)}, 
-        {SCE_C_GLOBALCLASS, RGB(0x00, 0x00, 0x00)}, 
-        {SCE_C_STRINGRAW, RGB(0x00, 0x00, 0x00)}, 
-        {SCE_C_TRIPLEVERBATIM, RGB(0x00, 0x00, 0x00)}, 
-        {SCE_C_HASHQUOTEDSTRING, RGB(0x00, 0x00, 0x00)}, 
-        {SCE_C_PREPROCESSORCOMMENT, RGB(0x00, 0x00, 0x00)}, 
-        {SCE_C_PREPROCESSORCOMMENTDOC, RGB(0x00, 0x00, 0x00)}, 
-        {SCE_C_USERLITERAL, RGB(0x00, 0x00, 0x00)}, 
-        {SCE_C_TASKMARKER, RGB(0x00, 0x00, 0x00)}, 
-        {SCE_C_ESCAPESEQUENCE, RGB(0x00, 0x00, 0x00)}
-    };
+    return 0;
+}
 
-    switch (value) {
+std::string join_string(const std::vector<std::string> &elements, char delimiter) {
+    std::string result;
+
+    for (std::size_t i=0; i<elements.size() - 1; i++) {
+        result += elements[i] + delimiter;
+    }
+
+    result += elements[elements.size() - 1];
+
+    return result;
+}
+
+
+void CMainWindow::applyLexer(const LexerConfiguration &value) {
+    const std::string joined_keywords = join_string(value.keywords, ' ');
+
+    switch (value.lexer) {
     case Lexer::Clike: 
         editorView.SendCommand(SCI_STYLECLEARALL);
         editorView.SendCommand(SCI_SETLEXER, SCLEX_CPP);
-        editorView.SendCommand(SCI_SETKEYWORDS, 0, (LPARAM)(cpp_keywords));
+        editorView.SendCommand(SCI_SETKEYWORDS, 0, (LPARAM)(joined_keywords.c_str()));
         
-        for (auto styleIt=colors.begin(); styleIt!=colors.end(); styleIt++) {
-            editorView.SendCommand(SCI_STYLESETFORE, styleIt->first, styleIt->second);
+        for (const auto style : value.tokenStyle) {
+            editorView.SendCommand(
+                SCI_STYLESETFORE, 
+                convertToken(SCLEX_CPP, style.tokenCode),
+                RGB(style.color.r, style.color.g, style.color.b)
+            );
         }
 
         editorView.SendCommand(SCI_STYLESETBOLD, SCE_C_WORD, 1);

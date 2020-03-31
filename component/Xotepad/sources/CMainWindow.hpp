@@ -89,7 +89,7 @@ public:
 
     virtual Font getFont() const override;
 
-    virtual void applyLexer(const Lexer &value) override;
+    virtual void applyLexer(const LexerConfiguration &value) override;
 
 private:
     void setupMenuBar();
