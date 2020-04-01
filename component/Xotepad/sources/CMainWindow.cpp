@@ -267,10 +267,30 @@ int convertToken(const int lexer, const int token) {
         case CLIKE_TASKMARKER: return SCE_C_TASKMARKER;
         case CLIKE_ESCAPESEQUENCE: return SCE_C_ESCAPESEQUENCE;
         }
+
+    case SCLEX_CMAKE:
+        switch (token) {
+        case CMAKE_DEFAULT: return SCE_CMAKE_DEFAULT;
+        case CMAKE_COMMENT: return SCE_CMAKE_COMMENT;
+        case CMAKE_STRINGDQ: return SCE_CMAKE_STRINGDQ;
+        case CMAKE_STRINGLQ: return SCE_CMAKE_STRINGLQ;
+        case CMAKE_STRINGRQ: return SCE_CMAKE_STRINGRQ;
+        case CMAKE_COMMANDS: return SCE_CMAKE_COMMANDS;
+        case CMAKE_PARAMETERS: return SCE_CMAKE_PARAMETERS;
+        case CMAKE_VARIABLE: return SCE_CMAKE_VARIABLE;
+        case CMAKE_USERDEFINED: return SCE_CMAKE_USERDEFINED;
+        case CMAKE_WHILEDEF: return SCE_CMAKE_WHILEDEF;
+        case CMAKE_FOREACHDEF: return SCE_CMAKE_FOREACHDEF;
+        case CMAKE_IFDEFINEDEF: return SCE_CMAKE_IFDEFINEDEF;
+        case CMAKE_MACRODEF: return SCE_CMAKE_MACRODEF;
+        case CMAKE_STRINGVAR: return SCE_CMAKE_STRINGVAR;
+        case CMAKE_NUMBER: return SCE_CMAKE_NUMBER;
+        }
     }
 
     return 0;
 }
+
 
 std::string join_string(const std::vector<std::string> &elements, char delimiter) {
     std::string result;
@@ -302,15 +322,30 @@ void CMainWindow::applyLexer(const LexerConfiguration &value) {
             );
         }
 
+        // TODO: Refactor to bold
         editorView.SendCommand(SCI_STYLESETBOLD, SCE_C_WORD, 1);
         editorView.SendCommand(SCI_STYLESETBOLD, SCE_C_WORD2, 1);
+
         editorView.SendCommand(SCI_SETTABWIDTH, 4);
         editorView.SendCommand(SCI_SETUSETABS, 0);
 
         break;
 
     case Lexer::CMake:
+        editorView.SendCommand(SCI_STYLECLEARALL);
         editorView.SendCommand(SCI_SETLEXER, SCLEX_CMAKE);
+        editorView.SendCommand(SCI_SETKEYWORDS, 0, (LPARAM)(joined_keywords.c_str()));
+        
+        for (const auto style : value.tokenStyle) {
+            editorView.SendCommand(
+                SCI_STYLESETFORE, 
+                convertToken(SCLEX_CMAKE, style.tokenCode),
+                RGB(style.color.r, style.color.g, style.color.b)
+            );
+        }
+
+        editorView.SendCommand(SCI_SETTABWIDTH, 4);
+        editorView.SendCommand(SCI_SETUSETABS, 0);
         break;
 
     default:

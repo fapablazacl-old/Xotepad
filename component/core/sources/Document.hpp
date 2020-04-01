@@ -35,6 +35,25 @@ enum ClikeToken {
 };
 
 
+enum CMakeToken {
+    CMAKE_DEFAULT,
+    CMAKE_COMMENT,
+    CMAKE_STRINGDQ,
+    CMAKE_STRINGLQ,
+    CMAKE_STRINGRQ,
+    CMAKE_COMMANDS,
+    CMAKE_PARAMETERS,
+    CMAKE_VARIABLE,
+    CMAKE_USERDEFINED,
+    CMAKE_WHILEDEF,
+    CMAKE_FOREACHDEF,
+    CMAKE_IFDEFINEDEF,
+    CMAKE_MACRODEF,
+    CMAKE_STRINGVAR,
+    CMAKE_NUMBER
+};
+
+
 struct Color {
     unsigned char r = 0, g = 0, b = 0;
 };
