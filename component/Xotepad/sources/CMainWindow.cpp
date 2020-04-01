@@ -349,6 +349,7 @@ void CMainWindow::applyLexer(const LexerConfiguration &value) {
         break;
 
     default:
+        editorView.SendCommand(SCI_STYLECLEARALL);
         editorView.SendCommand(SCI_SETLEXER, SCLEX_NULL);
         break;
     }
