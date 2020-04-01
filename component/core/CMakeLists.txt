@@ -15,11 +15,15 @@ set (sources
 	"sources/FileService.hpp" 
 	"sources/WindowsUtils.cpp" 
 	"sources/WindowsUtils.hpp" 
+	"sources/LexerConfigurationService.cpp" 
+	"sources/LexerConfigurationService.hpp" 
+	"sources/Document.cpp" 
+	"sources/Document.hpp" 
 )
 
-add_library(${target} ${sources})
+add_library (${target} ${sources})
 
-target_include_directories(${target} PRIVATE ${Boost_INCLUDE_DIR})
-target_link_directories(${target} PRIVATE ${Boost_LIBRARY_DIR})
+target_include_directories (${target} PRIVATE ${Boost_INCLUDE_DIR})
+target_link_directories (${target} PRIVATE ${Boost_LIBRARY_DIR})
 
-target_link_libraries(${target} ${Boost_LIBRARIES})
+target_link_libraries (${target} ${Boost_LIBRARIES})
