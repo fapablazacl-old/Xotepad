@@ -11,17 +11,6 @@ void CMainWindow::setTitle(const std::string &title) {
     SetTitle(widen(title).c_str());
 }
 
-
-void CMainWindow::setContent(const std::string &content) {
-    editorView.SetText(content.c_str());
-}
-
-
-std::string CMainWindow::getContent() const {
-    return editorView.GetText();
-}
-
-
 /*
 DialogResult CMainWindow::showMessageBoxModal(const std::string &title, const std::string &message, const DialogButtons buttons, const DialogIcon icon) {
     std::wstring wtitle = widen(title);
@@ -155,204 +144,8 @@ std::optional<std::string> CMainWindow::showFilePickModal(FileDialog type, const
 }
 
 
-void CMainWindow::clearContent() {
-    editorView.SetWindowText(L"");
-}
-
-
 void CMainWindow::terminateApp() {
     PostQuitMessage(0);
-}
-
-
-void CMainWindow::setSelection(const TextSelection &selection) {
-    editorView.SetSel(selection.start, selection.end, FALSE);
-}
-
-
-void CMainWindow::selectAll() {
-    editorView.SetSel(0, -1, FALSE);
-}
-
-
-void CMainWindow::clearSelection() {
-    editorView.SetSel(-1, -1, FALSE);
-}
-
-
-TextSelection CMainWindow::getSelection() const {
-    TextSelection selection = {0, 0};
-
-    editorView.GetSel(selection.start, selection.end);
-    
-    return selection;
-}
-
-
-void CMainWindow::undo() {
-    editorView.Undo();
-}
-
-
-void CMainWindow::redo() {
-    editorView.Redo();
-}
-
-
-void CMainWindow::cut() {
-    editorView.Cut();
-}
-
-
-void CMainWindow::copy() {
-    editorView.Copy();
-}
-
-
-void CMainWindow::paste() {
-    editorView.Paste();
-}
-
-
-void CMainWindow::setFont(const Font &font) {
-    HFONT fontHandle = CreateFont(
-        font.size, 0, 0, 0, FW_DONTCARE, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
-        CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH, widen(font.family).c_str()
-    );
-
-    if (fontHandle) {
-        if (this->fontHandle) {
-            DeleteObject(fontHandle);
-        }
-    }
-
-    this->fontHandle = fontHandle;
-}
-
-
-Font CMainWindow::getFont() const {
-    return {"", 12};
-}
-
-
-int convertToken(const int lexer, const int token) {
-    switch (lexer) {
-    case SCLEX_CPP:
-        switch (token) {
-        case CLIKE_COMMENT: return SCE_C_COMMENT;
-        case CLIKE_COMMENTLINE: return SCE_C_COMMENTLINE;
-        case CLIKE_COMMENTDOC: return SCE_C_COMMENTLINEDOC;
-        case CLIKE_NUMBER: return SCE_C_NUMBER;
-        case CLIKE_WORD: return SCE_C_WORD;
-        case CLIKE_STRING: return SCE_C_STRING;
-        case CLIKE_CHARACTER: return SCE_C_CHARACTER;
-        case CLIKE_UUID: return SCE_C_UUID;
-        case CLIKE_PREPROCESSOR: return SCE_C_PREPROCESSOR;
-        case CLIKE_OPERATOR: return SCE_C_OPERATOR;
-        case CLIKE_IDENTIFIER: return SCE_C_IDENTIFIER;
-        case CLIKE_STRINGEOL: return SCE_C_STRINGEOL;
-        case CLIKE_VERBATIM: return SCE_C_VERBATIM;
-        case CLIKE_REGEX: return SCE_C_REGEX;
-        case CLIKE_COMMENTLINEDOC: return SCE_C_COMMENTLINEDOC;
-        case CLIKE_WORD2: return SCE_C_WORD2;
-        case CLIKE_COMMENTDOCKEYWORD: return SCE_C_COMMENTDOCKEYWORD;
-        case CLIKE_COMMENTDOCKEYWORDERROR: return SCE_C_COMMENTDOCKEYWORDERROR;
-        case CLIKE_GLOBALCLASS: return SCE_C_GLOBALCLASS;
-        case CLIKE_STRINGRAW: return SCE_C_STRINGRAW;
-        case CLIKE_TRIPLEVERBATIM: return SCE_C_TRIPLEVERBATIM;
-        case CLIKE_HASHQUOTEDSTRING: return SCE_C_HASHQUOTEDSTRING;
-        case CLIKE_PREPROCESSORCOMMENT: return SCE_C_PREPROCESSORCOMMENT;
-        case CLIKE_PREPROCESSORCOMMENTDOC: return SCE_C_PREPROCESSORCOMMENTDOC;
-        case CLIKE_USERLITERAL: return SCE_C_USERLITERAL;
-        case CLIKE_TASKMARKER: return SCE_C_TASKMARKER;
-        case CLIKE_ESCAPESEQUENCE: return SCE_C_ESCAPESEQUENCE;
-        }
-
-    case SCLEX_CMAKE:
-        switch (token) {
-        case CMAKE_DEFAULT: return SCE_CMAKE_DEFAULT;
-        case CMAKE_COMMENT: return SCE_CMAKE_COMMENT;
-        case CMAKE_STRINGDQ: return SCE_CMAKE_STRINGDQ;
-        case CMAKE_STRINGLQ: return SCE_CMAKE_STRINGLQ;
-        case CMAKE_STRINGRQ: return SCE_CMAKE_STRINGRQ;
-        case CMAKE_COMMANDS: return SCE_CMAKE_COMMANDS;
-        case CMAKE_PARAMETERS: return SCE_CMAKE_PARAMETERS;
-        case CMAKE_VARIABLE: return SCE_CMAKE_VARIABLE;
-        case CMAKE_USERDEFINED: return SCE_CMAKE_USERDEFINED;
-        case CMAKE_WHILEDEF: return SCE_CMAKE_WHILEDEF;
-        case CMAKE_FOREACHDEF: return SCE_CMAKE_FOREACHDEF;
-        case CMAKE_IFDEFINEDEF: return SCE_CMAKE_IFDEFINEDEF;
-        case CMAKE_MACRODEF: return SCE_CMAKE_MACRODEF;
-        case CMAKE_STRINGVAR: return SCE_CMAKE_STRINGVAR;
-        case CMAKE_NUMBER: return SCE_CMAKE_NUMBER;
-        }
-    }
-
-    return 0;
-}
-
-
-std::string join_string(const std::vector<std::string> &elements, char delimiter) {
-    std::string result;
-
-    for (std::size_t i=0; i<elements.size() - 1; i++) {
-        result += elements[i] + delimiter;
-    }
-
-    result += elements[elements.size() - 1];
-
-    return result;
-}
-
-
-void CMainWindow::applyLexer(const LexerConfiguration &value) {
-    const std::string joined_keywords = join_string(value.keywords, ' ');
-
-    switch (value.lexer) {
-    case Lexer::Clike: 
-        editorView.SendCommand(SCI_STYLECLEARALL);
-        editorView.SendCommand(SCI_SETLEXER, SCLEX_CPP);
-        editorView.SendCommand(SCI_SETKEYWORDS, 0, (LPARAM)(joined_keywords.c_str()));
-        
-        for (const auto style : value.tokenStyle) {
-            editorView.SendCommand(
-                SCI_STYLESETFORE, 
-                convertToken(SCLEX_CPP, style.tokenCode),
-                RGB(style.color.r, style.color.g, style.color.b)
-            );
-        }
-
-        // TODO: Refactor to bold
-        editorView.SendCommand(SCI_STYLESETBOLD, SCE_C_WORD, 1);
-        editorView.SendCommand(SCI_STYLESETBOLD, SCE_C_WORD2, 1);
-
-        editorView.SendCommand(SCI_SETTABWIDTH, 4);
-        editorView.SendCommand(SCI_SETUSETABS, 0);
-
-        break;
-
-    case Lexer::CMake:
-        editorView.SendCommand(SCI_STYLECLEARALL);
-        editorView.SendCommand(SCI_SETLEXER, SCLEX_CMAKE);
-        editorView.SendCommand(SCI_SETKEYWORDS, 0, (LPARAM)(joined_keywords.c_str()));
-        
-        for (const auto style : value.tokenStyle) {
-            editorView.SendCommand(
-                SCI_STYLESETFORE, 
-                convertToken(SCLEX_CMAKE, style.tokenCode),
-                RGB(style.color.r, style.color.g, style.color.b)
-            );
-        }
-
-        editorView.SendCommand(SCI_SETTABWIDTH, 4);
-        editorView.SendCommand(SCI_SETUSETABS, 0);
-        break;
-
-    default:
-        editorView.SendCommand(SCI_STYLECLEARALL);
-        editorView.SendCommand(SCI_SETLEXER, SCLEX_NULL);
-        break;
-    }
 }
 
 
@@ -488,4 +281,9 @@ void CMainWindow::setupMenuBar() {
     HACCEL hAccel = CreateAcceleratorTable(accelerators.data(), (int)accelerators.size());
 
     GetApp()->SetAccelerators(hAccel, *this);
+}
+
+
+Document* CMainWindow::getDocument() {
+    return &editorView;
 }

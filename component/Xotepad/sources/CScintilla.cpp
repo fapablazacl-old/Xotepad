@@ -1,5 +1,214 @@
 
 #include "CScintilla.hpp"
+#include "WindowsUtils.hpp"
+
+
+static int convertToken(const int lexer, const int token) {
+    switch (lexer) {
+    case SCLEX_CPP:
+        switch (token) {
+        case CLIKE_COMMENT: return SCE_C_COMMENT;
+        case CLIKE_COMMENTLINE: return SCE_C_COMMENTLINE;
+        case CLIKE_COMMENTDOC: return SCE_C_COMMENTLINEDOC;
+        case CLIKE_NUMBER: return SCE_C_NUMBER;
+        case CLIKE_WORD: return SCE_C_WORD;
+        case CLIKE_STRING: return SCE_C_STRING;
+        case CLIKE_CHARACTER: return SCE_C_CHARACTER;
+        case CLIKE_UUID: return SCE_C_UUID;
+        case CLIKE_PREPROCESSOR: return SCE_C_PREPROCESSOR;
+        case CLIKE_OPERATOR: return SCE_C_OPERATOR;
+        case CLIKE_IDENTIFIER: return SCE_C_IDENTIFIER;
+        case CLIKE_STRINGEOL: return SCE_C_STRINGEOL;
+        case CLIKE_VERBATIM: return SCE_C_VERBATIM;
+        case CLIKE_REGEX: return SCE_C_REGEX;
+        case CLIKE_COMMENTLINEDOC: return SCE_C_COMMENTLINEDOC;
+        case CLIKE_WORD2: return SCE_C_WORD2;
+        case CLIKE_COMMENTDOCKEYWORD: return SCE_C_COMMENTDOCKEYWORD;
+        case CLIKE_COMMENTDOCKEYWORDERROR: return SCE_C_COMMENTDOCKEYWORDERROR;
+        case CLIKE_GLOBALCLASS: return SCE_C_GLOBALCLASS;
+        case CLIKE_STRINGRAW: return SCE_C_STRINGRAW;
+        case CLIKE_TRIPLEVERBATIM: return SCE_C_TRIPLEVERBATIM;
+        case CLIKE_HASHQUOTEDSTRING: return SCE_C_HASHQUOTEDSTRING;
+        case CLIKE_PREPROCESSORCOMMENT: return SCE_C_PREPROCESSORCOMMENT;
+        case CLIKE_PREPROCESSORCOMMENTDOC: return SCE_C_PREPROCESSORCOMMENTDOC;
+        case CLIKE_USERLITERAL: return SCE_C_USERLITERAL;
+        case CLIKE_TASKMARKER: return SCE_C_TASKMARKER;
+        case CLIKE_ESCAPESEQUENCE: return SCE_C_ESCAPESEQUENCE;
+        }
+
+    case SCLEX_CMAKE:
+        switch (token) {
+        case CMAKE_DEFAULT: return SCE_CMAKE_DEFAULT;
+        case CMAKE_COMMENT: return SCE_CMAKE_COMMENT;
+        case CMAKE_STRINGDQ: return SCE_CMAKE_STRINGDQ;
+        case CMAKE_STRINGLQ: return SCE_CMAKE_STRINGLQ;
+        case CMAKE_STRINGRQ: return SCE_CMAKE_STRINGRQ;
+        case CMAKE_COMMANDS: return SCE_CMAKE_COMMANDS;
+        case CMAKE_PARAMETERS: return SCE_CMAKE_PARAMETERS;
+        case CMAKE_VARIABLE: return SCE_CMAKE_VARIABLE;
+        case CMAKE_USERDEFINED: return SCE_CMAKE_USERDEFINED;
+        case CMAKE_WHILEDEF: return SCE_CMAKE_WHILEDEF;
+        case CMAKE_FOREACHDEF: return SCE_CMAKE_FOREACHDEF;
+        case CMAKE_IFDEFINEDEF: return SCE_CMAKE_IFDEFINEDEF;
+        case CMAKE_MACRODEF: return SCE_CMAKE_MACRODEF;
+        case CMAKE_STRINGVAR: return SCE_CMAKE_STRINGVAR;
+        case CMAKE_NUMBER: return SCE_CMAKE_NUMBER;
+        }
+    }
+
+    return 0;
+}
+
+
+static std::string join_string(const std::vector<std::string> &elements, char delimiter) {
+    std::string result;
+
+    for (std::size_t i=0; i<elements.size() - 1; i++) {
+        result += elements[i] + delimiter;
+    }
+
+    result += elements[elements.size() - 1];
+
+    return result;
+}
+
+
+void CScintilla::setContent(const std::string &content) {
+    this->SetText(content.c_str());
+}
+
+
+std::string CScintilla::getContent() const {
+    return this->GetText();
+}
+
+
+void CScintilla::clearContent() {
+    this->SetWindowText(L"");
+}
+
+
+void CScintilla::setSelection(const TextSelection &selection) {
+    this->SetSel(selection.start, selection.end, FALSE);
+}
+
+
+void CScintilla::selectAll() {
+    this->SetSel(0, -1, FALSE);
+}
+
+
+void CScintilla::clearSelection() {
+    this->SetSel(-1, -1, FALSE);
+}
+
+
+TextSelection CScintilla::getSelection() const {
+    TextSelection selection = {0, 0};
+
+    this->GetSel(selection.start, selection.end);
+    
+    return selection;
+}
+
+
+void CScintilla::undo() {
+    this->Undo();
+}
+
+
+void CScintilla::redo() {
+    this->Redo();
+}
+
+
+void CScintilla::cut() {
+    this->Cut();
+}
+
+
+void CScintilla::copy() {
+    this->Copy();
+}
+
+
+void CScintilla::paste() {
+    this->Paste();
+}
+
+
+void CScintilla::setFont(const Font &font) {
+    /*
+    HFONT fontHandle = CreateFont(
+        font.size, 0, 0, 0, FW_DONTCARE, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
+        CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH, widen(font.family).c_str()
+    );
+
+    if (fontHandle) {
+        if (this->fontHandle) {
+            DeleteObject(fontHandle);
+        }
+    }
+
+    this->fontHandle = fontHandle;
+    */
+}
+
+
+Font CScintilla::getFont() const {
+    return {"", 12};
+}
+
+
+void CScintilla::applyLexer(const LexerConfiguration &value) {
+    const std::string joined_keywords = join_string(value.keywords, ' ');
+
+    switch (value.lexer) {
+    case Lexer::Clike: 
+        this->SendCommand(SCI_STYLECLEARALL);
+        this->SendCommand(SCI_SETLEXER, SCLEX_CPP);
+        this->SendCommand(SCI_SETKEYWORDS, 0, (LPARAM)(joined_keywords.c_str()));
+        
+        for (const auto style : value.tokenStyle) {
+            this->SendCommand(
+                SCI_STYLESETFORE, 
+                convertToken(SCLEX_CPP, style.tokenCode),
+                RGB(style.color.r, style.color.g, style.color.b)
+            );
+        }
+
+        // TODO: Refactor to bold
+        this->SendCommand(SCI_STYLESETBOLD, SCE_C_WORD, 1);
+        this->SendCommand(SCI_STYLESETBOLD, SCE_C_WORD2, 1);
+
+        this->SendCommand(SCI_SETTABWIDTH, 4);
+        this->SendCommand(SCI_SETUSETABS, 0);
+
+        break;
+
+    case Lexer::CMake:
+        this->SendCommand(SCI_STYLECLEARALL);
+        this->SendCommand(SCI_SETLEXER, SCLEX_CMAKE);
+        this->SendCommand(SCI_SETKEYWORDS, 0, (LPARAM)(joined_keywords.c_str()));
+        
+        for (const auto style : value.tokenStyle) {
+            this->SendCommand(
+                SCI_STYLESETFORE, 
+                convertToken(SCLEX_CMAKE, style.tokenCode),
+                RGB(style.color.r, style.color.g, style.color.b)
+            );
+        }
+
+        this->SendCommand(SCI_SETTABWIDTH, 4);
+        this->SendCommand(SCI_SETUSETABS, 0);
+        break;
+
+    default:
+        this->SendCommand(SCI_STYLECLEARALL);
+        this->SendCommand(SCI_SETLEXER, SCLEX_NULL);
+        break;
+    }
+}
 
 
 void CScintilla::PreCreate(CREATESTRUCT& cs) {    

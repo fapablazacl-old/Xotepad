@@ -52,44 +52,17 @@ public:
 
     virtual LRESULT OnNotify(WPARAM wparam, LPARAM lparam) override;
 
+public:
     virtual void terminateApp() override;
 
-public:
     virtual void setTitle(const std::string &title) override;
-
-    virtual void setContent(const std::string &content) override;
-
-    virtual std::string getContent() const override;
-
-    virtual void clearContent() override;
 
     virtual DialogResult showMessageBoxModal(const std::string &title, const std::string &message, const DialogButtons buttons, const DialogIcon icon) override;
 
     virtual std::optional<std::string> showFilePickModal(FileDialog type, const std::string &title, const std::vector<FileFilter> &filters) override;
 
-    virtual void setSelection(const TextSelection &selection) override;
+    virtual Document* getDocument() override;
 
-    virtual TextSelection getSelection() const override;
-
-    virtual void selectAll() override;
-
-    virtual void clearSelection() override;
-
-    virtual void undo() override;
-
-    virtual void redo() override;
-
-    virtual void cut() override;
-
-    virtual void copy() override;
-
-    virtual void paste() override;
-
-    virtual void setFont(const Font &font) override;
-
-    virtual Font getFont() const override;
-
-    virtual void applyLexer(const LexerConfiguration &value) override;
 
 private:
     void setupMenuBar();

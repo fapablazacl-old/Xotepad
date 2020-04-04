@@ -11,7 +11,7 @@
 
 void MainWindowPresenter::attachView(MainWindow *view) {
     this->view = view;
-    this->view->setFont(Font{"Consolas", 14});
+    this->view->getDocument()->setFont(Font{"Consolas", 14});
 
     documentDirty = false;
     this->updateTitle();
@@ -57,7 +57,7 @@ void MainWindowPresenter::handleFileNew() {
 
 DialogUserOutcome MainWindowPresenter::handleFileSave() {
     if (documentFileName) {
-        this->saveFile(*documentFileName, view->getContent());
+        this->saveFile(*documentFileName, view->getDocument()->getContent());
 
         return DialogUserOutcome::Accept;
     }
@@ -108,7 +108,7 @@ DialogUserOutcome MainWindowPresenter::handleFileSaveAs() {
 
     if (auto result = view->showFilePickModal(FileDialog::Save, appTitle + " - Save File ...", filters); result) {
         const std::string fileName = *result;
-        const std::string content = view->getContent();
+        const std::string content = view->getDocument()->getContent();
 
         this->saveFile(fileName, content);
 
@@ -120,7 +120,7 @@ DialogUserOutcome MainWindowPresenter::handleFileSaveAs() {
 
 
 void MainWindowPresenter::newFile() {
-    view->clearContent();
+    view->getDocument()->clearContent();
 
     documentFileName.reset();
     documentDirty = false;
@@ -177,8 +177,8 @@ void MainWindowPresenter::loadFile(const std::string &fileName) {
     const LexerConfigurationService lexerService;
     const auto lexerConfig = lexerService.getConfiguration(fileFilter->id);
 
-    view->applyLexer(lexerConfig);
-    view->setContent(content);
+    view->getDocument()->applyLexer(lexerConfig);
+    view->getDocument()->setContent(content);
 
     this->updateTitle();
 }
@@ -210,32 +210,32 @@ void MainWindowPresenter::handleCloseRequested() {
 
 
 void MainWindowPresenter::handleEditUndo() {
-    view->undo();
+    view->getDocument()->undo();
 }
 
 
 void MainWindowPresenter::handleEditRedo() {
-    view->redo();
+    view->getDocument()->redo();
 }
 
 
 void MainWindowPresenter::handleEditCut() {
-    view->cut();
+    view->getDocument()->cut();
 }
 
 
 void MainWindowPresenter::handleEditCopy() {
-    view->copy();
+    view->getDocument()->copy();
 }
 
 
 void MainWindowPresenter::handleEditPaste() {
-    view->paste();
+    view->getDocument()->paste();
 }
 
 
 void MainWindowPresenter::handleEditSelectAll() {
-    view->selectAll();
+    view->getDocument()->selectAll();
 }
 
 

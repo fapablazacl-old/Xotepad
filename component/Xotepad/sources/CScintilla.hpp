@@ -6,6 +6,7 @@
 #include <Scintilla.h>
 #include <SciLexer.h>
 
+#include "Document.hpp"
 
 enum ScintillaColors {
     Black = RGB(0x00, 0x00, 0x00),
@@ -41,7 +42,38 @@ struct ScintillaConfig {
 };
 
 
-class CScintilla : public CWnd {
+class CScintilla : public CWnd, public Document {
+public:
+    virtual void setContent(const std::string &content) override;
+
+    virtual std::string getContent() const override;
+
+    virtual void clearContent() override;
+
+    virtual void setSelection(const TextSelection &selection) override;
+
+    virtual TextSelection getSelection() const override;
+
+    virtual void selectAll() override;
+
+    virtual void clearSelection() override;
+
+    virtual void undo() override;
+
+    virtual void redo() override;
+
+    virtual void cut() override;
+
+    virtual void copy() override;
+
+    virtual void paste() override;
+
+    virtual void setFont(const Font &font) override;
+
+    virtual Font getFont() const override;
+
+    virtual void applyLexer(const LexerConfiguration &value) override;
+
 public:
     CScintilla() {}
     virtual ~CScintilla() {}

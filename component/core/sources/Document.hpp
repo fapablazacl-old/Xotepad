@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 
+
 enum ClikeToken {
     CLIKE_COMMENT,
     CLIKE_COMMENTLINE,
@@ -76,4 +77,56 @@ struct LexerConfiguration {
     Lexer lexer;
     std::vector<std::string> keywords;
     std::vector<TokenStylingInformation> tokenStyle;
+};
+
+
+struct TextSelection {
+    int start;
+    int end;
+
+    static TextSelection all() {
+        return {-1, -1};
+    }
+};
+
+
+struct Font {
+    const std::string &family;
+    const int size;
+};
+
+
+class Document {
+public:
+    virtual ~Document();
+
+    virtual void setContent(const std::string &content) = 0;
+
+    virtual std::string getContent() const = 0;
+
+    virtual void clearContent() = 0;
+
+    virtual void setSelection(const TextSelection &selection) = 0;
+
+    virtual void selectAll() = 0;
+
+    virtual void clearSelection() = 0;
+
+    virtual void undo() = 0;
+
+    virtual void redo() = 0;
+
+    virtual void cut() = 0;
+
+    virtual void copy() = 0;
+
+    virtual void paste() = 0;
+
+    virtual TextSelection getSelection() const = 0;
+
+    virtual void setFont(const Font &font) = 0;
+
+    virtual Font getFont() const = 0;
+
+    virtual void applyLexer(const LexerConfiguration &value) = 0;
 };
