@@ -10,6 +10,9 @@ set (SCINTILLA_LIBRARY_PATH "${SCINTILLA_INSTALL_PATH}/lib")
 add_definitions (-DUNICODE)
 add_definitions (-D_UNICODE)
 
+# ??
+# add_definitions(-DAFX_RESOURCE_DLL)
+
 set (target "Xotepad")
 
 set (sources 
@@ -24,7 +27,7 @@ set (sources
 	"sources/CXotepadApp.hpp" 
 	"sources/CFindReplaceDialog.cpp" 
 	"sources/CFindReplaceDialog.hpp" 
-	"sources/Resource.rc" 
+	# "sources/Resource.rc" 
 )
 
 add_executable(${target} WIN32 ${sources})
