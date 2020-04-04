@@ -22,6 +22,9 @@ set (sources
 	"sources/CEditorView.hpp" 
 	"sources/CXotepadApp.cpp" 
 	"sources/CXotepadApp.hpp" 
+	"sources/CFindReplaceDialog.cpp" 
+	"sources/CFindReplaceDialog.hpp" 
+	"sources/Resource.rc" 
 )
 
 add_executable(${target} WIN32 ${sources})

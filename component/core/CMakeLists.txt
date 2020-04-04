@@ -19,6 +19,8 @@ set (sources
 	"sources/LexerConfigurationService.hpp" 
 	"sources/Document.cpp" 
 	"sources/Document.hpp" 
+	"sources/FindReplaceDialog.cpp" 
+	"sources/FindReplaceDialog.hpp" 
 )
 
 add_library (${target} ${sources})
