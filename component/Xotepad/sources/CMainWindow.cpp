@@ -5,6 +5,7 @@
 #include "CMyFindReplaceDialog.hpp"
 
 #include <vector>
+#include <atldlgs.h>
 
 void CMainWindow::setTitle(const std::string &title) {
     this->SetWindowTextW(widen(title).c_str());
@@ -92,58 +93,105 @@ DialogResult CMainWindow::showMessageBoxModal(const std::string &title, const st
     return DialogResult::Cancel;
 }
 
-/*
-CString ToDialogFilterString(const std::vector<std::string> &wildcards) {
-    CString result;
 
-    for (int i=0; i<wildcards.size(); i++) {
-        result += wildcards[i].c_str();
+class CFileFilterConverter {
+public:
+    CFileFilterConverter(const std::vector<FileFilter> &filters) {
+        // fill the buffer!
+        AppendToBuffer(filters);
+        AppendToBuffer('\0');
+
+        // construct the final string
+        filterString.resize(buffer.size());
+
+        std::memcpy(filterString.data(), buffer.data(), buffer.size());
+    }
+
+    CFileFilterConverter(const CFileFilterConverter &other) = delete;
+
+    CFileFilterConverter& operator=(const CFileFilterConverter &other) = delete;
+
+    ~CFileFilterConverter() {
         
-        if (i < wildcards.size() - 1) {
-            result += ";";
+    }
+
+    std::wstring GetFileFilterString() {
+        return widen(filterString);
+    }
+
+
+private:
+    void AppendToBuffer(const std::string &text) {
+        for (char ch : text) {
+            buffer.push_back(ch);
+        }
+    }
+    
+
+    void AppendToBuffer(const char &ch) {
+        buffer.push_back(ch);
+    }
+
+
+    void AppendToBuffer(const std::vector<std::string> &wildcards) {
+        for (int i=0; i<wildcards.size(); i++) {
+            this->AppendToBuffer(wildcards[i]);
+
+            if (i < wildcards.size() - 1) {
+                this->AppendToBuffer(';');
+            }
         }
     }
 
-    return result;
-}
 
-
-CString ToDialogFilterString(const FileFilter &filter) {
-    return filter.caption.c_str() + CString("|") + ToDialogFilterString(filter.wildcards);
-}
-
-
-CString ToDialogFilterString(const std::vector<FileFilter> &filters) {
-    CString result;
-
-    for (const FileFilter &filter : filters) {
-        result += ToDialogFilterString(filter);
-        result += "|";
+    void AppendToBuffer(const FileFilter &filter) {
+        AppendToBuffer(filter.caption);
+        AppendToBuffer('\0');
+        AppendToBuffer(filter.wildcards);
     }
 
-    return result;
-}
-*/
+
+    void AppendToBuffer(const std::vector<FileFilter> &filters) {
+        for (const FileFilter &filter : filters) {
+            AppendToBuffer(filter);
+            AppendToBuffer('\0');
+        }
+    }
+
+private:
+    std::vector<char> buffer;
+    std::string filterString;
+};
+
 
 std::optional<std::string> CMainWindow::showFilePickModal(FileDialog type, const std::string &title, const std::vector<FileFilter> &filters) {
-    /*
-    const CString filter = ToDialogFilterString(filters);
+    CFileFilterConverter filterConverter(filters);
+    auto filter = filterConverter.GetFileFilterString();
+    // const CString filter = ToDialogFilterString(filters);
+    // const wchar_t filter[] = L"C++ Source Files\0*.cpp;*.c\0Text Files\0*.txt\0";
     const DWORD flags = OFN_LONGNAMES | OFN_PATHMUSTEXIST  | OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_EXPLORER | OFN_ENABLESIZING;
 
-    CFileDialog fileDlg(type == FileDialog::Open ? TRUE : FALSE, NULL, 0, flags, filter);
+    CFileDialog fileDlg(type == FileDialog::Open ? TRUE : FALSE, NULL, 0, flags, filter.c_str());
 
-    fileDlg.SetTitle(widen(title).c_str());
-
+    // fileDlg.SetWindowTextW(widen(title).c_str());
+    auto wtitle = widen(title);
+    fileDlg.m_ofn.lpstrTitle = wtitle.c_str();
     if (fileDlg.DoModal(*this) == IDCANCEL) {
         return {};
     }
 
-    CString fileName = fileDlg.GetPathName();
+    return narrow(fileDlg.m_szFileName);
+    
 
-    return narrow(fileName.c_str());
-    */
+    /*
+    CFileDialog dialog(TRUE, _T("All Files\0*.*"));
 
+    if (dialog.DoModal() == IDOK) {
+        return narrow(dialog.m_szFileName);
+    }
+    
     return {};
+    */
 }
 
 
@@ -224,7 +272,14 @@ LRESULT CMainWindow::OnNotify(int idCtrl, LPNMHDR pnmh) {
 
 
 void CMainWindow::OnSize(UINT nType, CSize size) {
-    // TODO: Add implementation
+    if (! editorView.IsWindow()) {
+        return;
+    }
+
+    RECT clientRect;
+    this->GetClientRect(&clientRect);
+
+    editorView.SetWindowPos(NULL, &clientRect, SWP_DRAWFRAME);
 }
 
 
