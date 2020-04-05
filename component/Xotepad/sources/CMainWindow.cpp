@@ -289,6 +289,5 @@ Document* CMainWindow::getDocument() {
 
 
 void CMainWindow::showFindReplace() {
-    dialog.Create(this->GetHwnd());
-    dialog.ShowWindow();
+    dialog.DoModeless();
 }

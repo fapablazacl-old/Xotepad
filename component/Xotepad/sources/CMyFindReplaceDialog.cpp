@@ -1,5 +1,45 @@
 
 #include "CMyFindReplaceDialog.hpp"
+#include "resource.h"
+
+
+CMyFindReplaceDialog::CMyFindReplaceDialog() : CDialog(IDD_FORMVIEW) {
+
+}
+
+
+CMyFindReplaceDialog::~CMyFindReplaceDialog() {
+}
+
+
+void CMyFindReplaceDialog::OnDestroy() {
+
+}
+
+
+BOOL CMyFindReplaceDialog::OnInitDialog() {
+    return TRUE;
+}
+
+
+INT_PTR CMyFindReplaceDialog::DialogProc(UINT msg, WPARAM wparam, LPARAM lparam) {
+    
+    return DialogProcDefault(msg, wparam, lparam);
+}
+
+
+BOOL CMyFindReplaceDialog::OnCommand(WPARAM wparam, LPARAM lparam) {
+    return TRUE;
+}
+
+
+void CMyFindReplaceDialog::OnOK() {
+
+}
+
+
+/*
+#include "CMyFindReplaceDialog.hpp"
 
 CMyFindReplaceDialog::CMyFindReplaceDialog() {
     // controlFont.CreatePointFont(32, L"MS Shell Dlg");
@@ -34,16 +74,12 @@ int CMyFindReplaceDialog::OnCreate(CREATESTRUCT& cs) {
     findWhatLabel.ShowWindow();
     findWhatLabel.UpdateWindow();
 
-    /*
-    findWhatEdit
-
-    replaceWithLabel
-    replaceWithEdit
-
-    matchCaseCheckbox
-    matchWholeWordCheckbox
-    */
-
+    // findWhatEdit
+    // replaceWithLabel
+    // replaceWithEdit
+    // matchCaseCheckbox
+    // matchWholeWordCheckbox
 
     return CWnd::OnCreate(cs);
 }
+*/
