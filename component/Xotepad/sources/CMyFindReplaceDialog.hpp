@@ -1,6 +1,8 @@
 
 #pragma once 
 
+#if 0
+
 #include <wxx_dialog.h>
 
 class CMyFindReplaceDialog : public CDialog {
@@ -47,3 +49,5 @@ private:
     CButton matchWholeWordCheckbox;
 };
 */
+
+#endif

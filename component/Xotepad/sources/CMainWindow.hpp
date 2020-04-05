@@ -1,21 +1,38 @@
 
 #pragma once 
 
-#include <wxx_wincore.h>
-#include <wxx_frame.h>
-#include <wxx_menubar.h>
-#include <wxx_menu.h>
-#include <wxx_commondlg.h>
-
 #include <string>
 #include <fstream>
 #include <optional>
+
+#include <atlbase.h>
+#include <atlapp.h>
+#include <atlframe.h>
+#include <atlctrls.h>
+#include <atlctrlx.h>
+#include <atluser.h>
+#include <atlcrack.h>
+#include <atlsplit.h>
+#include <atlmisc.h>
 
 #include "MainWindow.hpp"
 #include "CScintilla.hpp"
 #include "CMyFindReplaceDialog.hpp"
 
-class CMainWindow : public CFrame, public MainWindow {
+
+class CMainWindow : public CWindowImpl<CMainWindow, CWindow, CFrameWinTraits>, public MainWindow {
+public:
+    DECLARE_WND_CLASS(_T("CMainWindow"))
+    BEGIN_MSG_MAP(CMainWindow)
+        COMMAND_CODE_HANDLER(0, OnCommand)
+
+        MSG_WM_CREATE(OnCreate)
+        MSG_WM_CLOSE(OnClose)
+        // MSG_WM_DESTROY(OnDestroy)
+        MSG_WM_SIZE(OnSize)
+        MSG_WM_NOTIFY(OnNotify)
+    END_MSG_MAP()
+
 private:
     enum  {
         IDM_FILE_NEW = 1000, 
@@ -42,15 +59,17 @@ public:
 
     virtual ~CMainWindow();
 
-    // virtual void OnDestroy() override;
+    int OnCommand(WORD wNotifyCode  , WORD wID, HWND hWndCtrl, BOOL &bHandled);
 
-    virtual void OnClose() override;
+    int OnCreate(LPCREATESTRUCT lpCreateStruct);
 
-    virtual int OnCreate(CREATESTRUCT& cs) override;
+    void OnClose();
 
-    virtual BOOL OnCommand(WPARAM wparam, LPARAM lparam) override;
+    // void OnDestroy();
 
-    virtual LRESULT OnNotify(WPARAM wparam, LPARAM lparam) override;
+    void OnSize(UINT nType, CSize size);
+
+    LRESULT OnNotify(int idCtrl, LPNMHDR pnmh);
 
 public:
     virtual void terminateApp() override;
@@ -69,7 +88,6 @@ private:
     void setupMenuBar();
 
 private:
-    // CEditorView editorView;
     CScintilla editorView;
-    CMyFindReplaceDialog dialog;
+    // CMyFindReplaceDialog dialog;
 };

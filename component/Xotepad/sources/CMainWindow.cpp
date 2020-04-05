@@ -5,11 +5,9 @@
 #include "CMyFindReplaceDialog.hpp"
 
 #include <vector>
-#include <wxx_taskdialog.h>
-
 
 void CMainWindow::setTitle(const std::string &title) {
-    SetTitle(widen(title).c_str());
+    this->SetWindowTextW(widen(title).c_str());
 }
 
 /*
@@ -94,7 +92,7 @@ DialogResult CMainWindow::showMessageBoxModal(const std::string &title, const st
     return DialogResult::Cancel;
 }
 
-
+/*
 CString ToDialogFilterString(const std::vector<std::string> &wildcards) {
     CString result;
 
@@ -125,9 +123,10 @@ CString ToDialogFilterString(const std::vector<FileFilter> &filters) {
 
     return result;
 }
-
+*/
 
 std::optional<std::string> CMainWindow::showFilePickModal(FileDialog type, const std::string &title, const std::vector<FileFilter> &filters) {
+    /*
     const CString filter = ToDialogFilterString(filters);
     const DWORD flags = OFN_LONGNAMES | OFN_PATHMUSTEXIST  | OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_EXPLORER | OFN_ENABLESIZING;
 
@@ -142,6 +141,9 @@ std::optional<std::string> CMainWindow::showFilePickModal(FileDialog type, const
     CString fileName = fileDlg.GetPathName();
 
     return narrow(fileName.c_str());
+    */
+
+    return {};
 }
 
 
@@ -151,7 +153,7 @@ void CMainWindow::terminateApp() {
 
 
 CMainWindow::CMainWindow(MainWindowPresenter *presenter) : MainWindow(presenter) {
-    this->SetView(editorView);
+    
 }
 
 
@@ -165,17 +167,16 @@ void CMainWindow::OnClose() {
 }
 
 
-int CMainWindow::OnCreate(CREATESTRUCT& cs) {
-    UseIndicatorStatus(FALSE);   // Don't show keyboard indicators in the StatusBar
-    UseMenuStatus(FALSE);        // Don't show menu descriptions in the StatusBar
-    UseReBar(FALSE);             // Don't use a ReBar
-    UseStatusBar(FALSE);         // Don't use a StatusBar
-    UseThemes(FALSE);            // Don't use themes
-    UseToolBar(FALSE);           // Don't use a ToolBar
-
-    CFrame::OnCreate(cs);
-
+int CMainWindow::OnCreate(LPCREATESTRUCT lpCreateStruct) {
     this->setupMenuBar();
+    
+    // Create the Editor control ...
+
+    RECT clientRect;
+
+    this->GetClientRect(&clientRect);
+
+    editorView.Create(L"Scintilla", m_hWnd, clientRect, L"", WS_CHILD | WS_VISIBLE);
 
     getPresenter()->attachView(this);
     
@@ -183,11 +184,8 @@ int CMainWindow::OnCreate(CREATESTRUCT& cs) {
 }
 
 
-BOOL CMainWindow::OnCommand(WPARAM wparam, LPARAM lparam) {
-    const UINT id = LOWORD(wparam);
-    const UINT nc = HIWORD(wparam);
-
-    switch (id) {
+int CMainWindow::OnCommand(WORD wNotifyCode, WORD wID, HWND hWndCtrl, BOOL &bHandled) {
+    switch (wID) {
         case IDM_FILE_NEW: getPresenter()->handleFileNew(); return FALSE;
         case IDM_FILE_OPEN: getPresenter()->handleFileOpen(); return FALSE;
         case IDM_FILE_SAVE: getPresenter()->handleFileSave(); return FALSE;
@@ -207,13 +205,11 @@ BOOL CMainWindow::OnCommand(WPARAM wparam, LPARAM lparam) {
 }
 
 
-LRESULT CMainWindow::OnNotify(WPARAM wparam, LPARAM lparam) {
-    auto nmhdr = reinterpret_cast<LPNMHDR>(lparam);
+LRESULT CMainWindow::OnNotify(int idCtrl, LPNMHDR pnmh) {
+    if (pnmh->hwndFrom == editorView) {
+        auto notification = reinterpret_cast<SCNotification *>(pnmh);
 
-    if (nmhdr->hwndFrom == editorView.GetHwnd()) {
-        auto notification = reinterpret_cast<SCNotification *>(nmhdr);
-
-        switch (nmhdr->code) {
+        switch (pnmh->code) {
             case SCN_MODIFIED: {
                 if (notification->modificationType & SC_PERFORMED_USER) {
                     // NOTE: This gets called when we set the text via the Scintilla API ...
@@ -224,6 +220,11 @@ LRESULT CMainWindow::OnNotify(WPARAM wparam, LPARAM lparam) {
     }
 
     return 0;
+}
+
+
+void CMainWindow::OnSize(UINT nType, CSize size) {
+    // TODO: Add implementation
 }
 
 
@@ -279,7 +280,7 @@ void CMainWindow::setupMenuBar() {
 
     HACCEL hAccel = CreateAcceleratorTable(accelerators.data(), (int)accelerators.size());
 
-    GetApp()->SetAccelerators(hAccel, *this);
+    // GetApp()->SetAccelerators(hAccel, *this);
 }
 
 
@@ -289,5 +290,5 @@ Document* CMainWindow::getDocument() {
 
 
 void CMainWindow::showFindReplace() {
-    dialog.DoModeless();
+    // dialog.DoModeless();
 }

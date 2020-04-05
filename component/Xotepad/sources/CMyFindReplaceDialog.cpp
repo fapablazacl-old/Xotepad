@@ -1,4 +1,6 @@
 
+#if 0
+
 #include "CMyFindReplaceDialog.hpp"
 #include "resource.h"
 
@@ -83,3 +85,5 @@ int CMyFindReplaceDialog::OnCreate(CREATESTRUCT& cs) {
     return CWnd::OnCreate(cs);
 }
 */
+
+#endif

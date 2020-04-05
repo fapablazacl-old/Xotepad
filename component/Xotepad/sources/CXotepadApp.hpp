@@ -1,9 +1,9 @@
 
 #pragma once
 
-#include <wxx_wincore.h>
+#include <Windows.h>
 
-class CXotepadApp : public CWinApp {
+class CXotepadApp {
 public:
     CXotepadApp();
 

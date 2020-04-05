@@ -1,8 +1,18 @@
 
 #pragma once
 
-#include <wxx_wincore.h>
-#include <wxx_controls.h>
+#include <map>
+
+#include <atlbase.h>
+#include <atlapp.h>
+#include <atlframe.h>
+#include <atlctrls.h>
+#include <atlctrlx.h>
+#include <atluser.h>
+#include <atlcrack.h>
+#include <atlsplit.h>
+#include <atlmisc.h>
+
 #include <Scintilla.h>
 #include <SciLexer.h>
 
@@ -42,7 +52,7 @@ struct ScintillaConfig {
 };
 
 
-class CScintilla : public CWnd, public Document {
+class CScintilla : public CWindow, public Document {
 public:
     virtual void setContent(const std::string &content) override;
 
@@ -81,10 +91,6 @@ public:
     CScintilla(const CScintilla&) = delete;
 
     CScintilla& operator= (const CScintilla&) = delete;
-
-    virtual void PreCreate(CREATESTRUCT& cs) override;
-
-    virtual HWND Create(HWND parent) override;
 
     LRESULT SendCommand(UINT Msg, WPARAM wParam = 0, LPARAM lParam = 0);
 

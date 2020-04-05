@@ -1,4 +1,5 @@
 
+
 #include "CScintilla.hpp"
 #include "WindowsUtils.hpp"
 
@@ -211,69 +212,13 @@ void CScintilla::applyLexer(const LexerConfiguration &value) {
 }
 
 
-void CScintilla::PreCreate(CREATESTRUCT& cs) {    
-    cs.style = WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_CLIPCHILDREN;
-}
-
-
-HWND CScintilla::Create(HWND parent) {
-    CREATESTRUCT cs;
-    ZeroMemory(&cs, sizeof(cs));
-
-    // Set the WNDCLASS parameters
-    cs.lpszClass = _T("Scintilla");
-
-    // Set a reasonable default window style
-    DWORD dwOverlappedStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
-    cs.style = WS_VISIBLE | ((parent)? WS_CHILD : dwOverlappedStyle );
-
-    // Set a reasonable default window position
-    if (NULL == parent)
-    {
-        cs.x  = CW_USEDEFAULT;
-        cs.cx = CW_USEDEFAULT;
-        cs.y  = CW_USEDEFAULT;
-        cs.cy = CW_USEDEFAULT;
-    }
-
-    // Allow the CREATESTRUCT parameters to be modified
-    PreCreate(cs);
-
-    DWORD style = cs.style & ~WS_VISIBLE;
-    HWND wnd;
-
-    // Create the window
-#ifndef _WIN32_WCE
-    wnd = CreateEx(cs.dwExStyle, cs.lpszClass, cs.lpszName, style,
-            cs.x, cs.y, cs.cx, cs.cy, parent,
-            cs.hMenu, cs.lpCreateParams);
-
-    if (cs.style & WS_VISIBLE)
-    {
-        if      (cs.style & WS_MAXIMIZE) ShowWindow(SW_MAXIMIZE);
-        else if (cs.style & WS_MINIMIZE) ShowWindow(SW_MINIMIZE);
-        else    ShowWindow();
-    }
-
-#else
-    wnd = CreateEx(cs.dwExStyle, cs.lpszClass, cs.lpszName, cs.style,
-            cs.x, cs.y, cs.cx, cs.cy, parent,
-            0, cs.lpCreateParams);
-#endif
-
-    this->SetStyle({STYLE_DEFAULT, Black, White, 10, "Consolas"});
-
-    return wnd;
-}
-
-
 LRESULT CScintilla::SendCommand(UINT Msg, WPARAM wParam, LPARAM lParam) {
-    return this->SendMessage(Msg, wParam, lParam);
+    return ::SendMessageW(m_hWnd, Msg, wParam, lParam);
 }
 
 
 LRESULT CScintilla::SendCommand(UINT Msg, WPARAM wParam, LPARAM lParam) const {
-    return this->SendMessage(Msg, wParam, lParam);
+    return ::SendMessageW(m_hWnd, Msg, wParam, lParam);
 }
 
 
