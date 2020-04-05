@@ -12,8 +12,8 @@
 #include <optional>
 
 #include "MainWindow.hpp"
-#include "CEditorView.hpp"
 #include "CScintilla.hpp"
+#include "CMyFindReplaceDialog.hpp"
 
 class CMainWindow : public CFrame, public MainWindow {
 private:
@@ -63,6 +63,7 @@ public:
 
     virtual Document* getDocument() override;
 
+    virtual void showFindReplace() override;
 
 private:
     void setupMenuBar();
@@ -70,5 +71,5 @@ private:
 private:
     // CEditorView editorView;
     CScintilla editorView;
-    HFONT fontHandle = NULL;
+    CMyFindReplaceDialog dialog;
 };

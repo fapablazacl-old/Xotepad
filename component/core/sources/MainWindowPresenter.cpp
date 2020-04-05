@@ -240,7 +240,7 @@ void MainWindowPresenter::handleEditSelectAll() {
 
 
 void MainWindowPresenter::handleEditFindReplace() {
-
+    view->showFindReplace();
 }
 
 

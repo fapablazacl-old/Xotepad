@@ -2,6 +2,7 @@
 #include "CMainWindow.hpp"
 #include "MainWindowPresenter.hpp"
 #include "WindowsUtils.hpp"
+#include "CMyFindReplaceDialog.hpp"
 
 #include <vector>
 #include <wxx_taskdialog.h>
@@ -155,9 +156,7 @@ CMainWindow::CMainWindow(MainWindowPresenter *presenter) : MainWindow(presenter)
 
 
 CMainWindow::~CMainWindow() {
-    if (fontHandle) {
-        DeleteObject(fontHandle);
-    }
+    
 }
 
 
@@ -286,4 +285,10 @@ void CMainWindow::setupMenuBar() {
 
 Document* CMainWindow::getDocument() {
     return &editorView;
+}
+
+
+void CMainWindow::showFindReplace() {
+    dialog.Create(this->GetHwnd());
+    dialog.ShowWindow();
 }

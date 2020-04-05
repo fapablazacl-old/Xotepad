@@ -23,6 +23,8 @@ set (sources
 	"sources/FindReplaceDialog.hpp" 
 )
 
+source_group(\\ FILES ${sources})
+
 add_library (${target} ${sources})
 
 target_include_directories (${target} PRIVATE ${Boost_INCLUDE_DIR})

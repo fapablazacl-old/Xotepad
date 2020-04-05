@@ -56,6 +56,8 @@ public:
 
     virtual Document* getDocument() = 0;
 
+    virtual void showFindReplace() = 0;
+
 protected:
     MainWindowPresenter *getPresenter() {
         return presenter;

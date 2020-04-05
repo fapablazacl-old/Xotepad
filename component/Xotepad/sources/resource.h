@@ -2,6 +2,8 @@
 // Microsoft Visual C++ generated include file.
 // Used by Resource.rc
 //
+#include <Windows.h>
+
 #define IDD_FORMVIEW                    101
 #define IDC_CHECK1                      1000
 #define IDC_CHECK2                      1001
