@@ -165,33 +165,20 @@ private:
 
 
 std::optional<std::string> CMainWindow::showFilePickModal(FileDialog type, const std::string &title, const std::vector<FileFilter> &filters) {
-    CFileFilterConverter filterConverter(filters);
-    auto filter = filterConverter.GetFileFilterString();
-    // const CString filter = ToDialogFilterString(filters);
-    // const wchar_t filter[] = L"C++ Source Files\0*.cpp;*.c\0Text Files\0*.txt\0";
+    const std::wstring filter = CFileFilterConverter(filters).GetFileFilterString();
+    const std::wstring wtitle = widen(title);
+
     const DWORD flags = OFN_LONGNAMES | OFN_PATHMUSTEXIST  | OFN_HIDEREADONLY | OFN_SHOWHELP | OFN_EXPLORER | OFN_ENABLESIZING;
 
     CFileDialog fileDlg(type == FileDialog::Open ? TRUE : FALSE, NULL, 0, flags, filter.c_str());
 
-    // fileDlg.SetWindowTextW(widen(title).c_str());
-    auto wtitle = widen(title);
     fileDlg.m_ofn.lpstrTitle = wtitle.c_str();
+
     if (fileDlg.DoModal(*this) == IDCANCEL) {
         return {};
     }
 
     return narrow(fileDlg.m_szFileName);
-    
-
-    /*
-    CFileDialog dialog(TRUE, _T("All Files\0*.*"));
-
-    if (dialog.DoModal() == IDOK) {
-        return narrow(dialog.m_szFileName);
-    }
-    
-    return {};
-    */
 }
 
 

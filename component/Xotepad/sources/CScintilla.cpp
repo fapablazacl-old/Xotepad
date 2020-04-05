@@ -3,6 +3,7 @@
 #include "CScintilla.hpp"
 #include "WindowsUtils.hpp"
 
+#include <iostream>
 
 static int convertToken(const int lexer, const int token) {
     switch (lexer) {
@@ -153,10 +154,13 @@ void CScintilla::setFont(const Font &font) {
 
     this->fontHandle = fontHandle;
     */
+
+    std::cout << "HOladsa" << std::endl;
 }
 
 
 Font CScintilla::getFont() const {
+    // TODO: Font
     return {"", 12};
 }
 
@@ -202,11 +206,13 @@ void CScintilla::applyLexer(const LexerConfiguration &value) {
 
         this->SendCommand(SCI_SETTABWIDTH, 4);
         this->SendCommand(SCI_SETUSETABS, 0);
+
         break;
 
     default:
         this->SendCommand(SCI_STYLECLEARALL);
         this->SendCommand(SCI_SETLEXER, SCLEX_NULL);
+
         break;
     }
 }
