@@ -13,4 +13,5 @@ include_directories ("./component/core/sources")
 include_directories ("./dependencies/Catch2/single_include")
 add_subdirectory ("./component/test-core")
 
+include_directories ("./dependencies/wtl-git/Include")
 add_subdirectory ("./component/Xotepad")
