@@ -336,5 +336,6 @@ Document* CMainWindow::getDocument() {
 
 
 void CMainWindow::showFindReplace() {
-    // dialog.DoModeless();
+    CMyFindReplaceDialog dialog;
+    dialog.DoModal();
 }

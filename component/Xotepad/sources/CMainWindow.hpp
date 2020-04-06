@@ -91,5 +91,4 @@ private:
 
 private:
     CDocument documentView;
-    // CMyFindReplaceDialog dialog;
 };

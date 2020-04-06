@@ -1,53 +1,31 @@
 
 #pragma once 
 
-#if 0
+#include <atlbase.h>
+#include <atlapp.h>
+#include <atlframe.h>
+#include <atlctrls.h>
+#include <atlctrlx.h>
+#include <atluser.h>
+#include <atlcrack.h>
+#include <atlsplit.h>
+#include <atlmisc.h>
+#include <atldlgs.h>
 
-#include <wxx_dialog.h>
+#include "resource.h"
 
-class CMyFindReplaceDialog : public CDialog {
+class CMyFindReplaceDialog : public CDialogImpl<CMyFindReplaceDialog> {
 public:
-    CMyFindReplaceDialog();
+    enum { IDD = IDD_FORMVIEW };
 
-    virtual ~CMyFindReplaceDialog();
+    BEGIN_MSG_MAP(CMyFindReplaceDialog)
+        MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
+        COMMAND_ID_HANDLER(IDOK, OnCloseCmd)
+        COMMAND_ID_HANDLER(IDCANCEL, OnCloseCmd)
+    END_MSG_MAP()
 
-protected:
-    virtual void OnDestroy() override;
-    virtual BOOL OnInitDialog() override;
-    virtual INT_PTR DialogProc(UINT msg, WPARAM wparam, LPARAM lparam) override;
-    virtual BOOL OnCommand(WPARAM wparam, LPARAM lparam) override;
-    virtual void OnOK() override;
-};
-
-
-/*
-#pragma once 
-
-#include <wxx_wincore.h>
-#include <wxx_controls.h>
-
-class CMyFindReplaceDialog : public CDialog {
 public:
-    CMyFindReplaceDialog();
+    LRESULT OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 
-    ~CMyFindReplaceDialog();
-
-    virtual void PreCreate(CREATESTRUCT &cs) override;
-
-    virtual int OnCreate(CREATESTRUCT& cs) override;
-
-private:    
-    CFont controlFont;
-
-    CStatic findWhatLabel;
-    CEdit findWhatEdit;
-
-    CStatic replaceWithLabel;
-    CEdit replaceWithEdit;
-
-    CButton matchCaseCheckbox;
-    CButton matchWholeWordCheckbox;
+	LRESULT OnCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 };
-*/
-
-#endif
