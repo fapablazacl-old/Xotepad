@@ -14,8 +14,8 @@ set (target "Xotepad")
 
 set (sources 
 	"sources/main.cpp"
-	"sources/CScintilla.cpp" 
-	"sources/CScintilla.hpp" 
+	"sources/CDocument.cpp" 
+	"sources/CDocument.hpp" 
 	"sources/CMainWindow.cpp" 
 	"sources/CMainWindow.hpp" 
 	"sources/CEditorView.cpp" 

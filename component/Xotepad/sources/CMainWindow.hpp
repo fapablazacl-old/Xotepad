@@ -16,7 +16,7 @@
 #include <atlmisc.h>
 
 #include "MainWindow.hpp"
-#include "CScintilla.hpp"
+#include "CDocument.hpp"
 #include "CMyFindReplaceDialog.hpp"
 
 
@@ -85,9 +85,11 @@ public:
     virtual void showFindReplace() override;
 
 private:
-    void setupMenuBar();
+    void SetupMenuBar();
+
+    void SetupDocumentEditor();
 
 private:
-    CScintilla editorView;
+    CDocument documentView;
     // CMyFindReplaceDialog dialog;
 };

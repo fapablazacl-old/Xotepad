@@ -11,6 +11,7 @@ void CMainWindow::setTitle(const std::string &title) {
     this->SetWindowTextW(widen(title).c_str());
 }
 
+
 /*
 DialogResult CMainWindow::showMessageBoxModal(const std::string &title, const std::string &message, const DialogButtons buttons, const DialogIcon icon) {
     std::wstring wtitle = widen(title);
@@ -203,15 +204,8 @@ void CMainWindow::OnClose() {
 
 
 int CMainWindow::OnCreate(LPCREATESTRUCT lpCreateStruct) {
-    this->setupMenuBar();
-    
-    // Create the Editor control ...
-
-    RECT clientRect;
-
-    this->GetClientRect(&clientRect);
-
-    editorView.Create(L"Scintilla", m_hWnd, clientRect, L"", WS_CHILD | WS_VISIBLE);
+    this->SetupMenuBar();
+    this->SetupDocumentEditor();
 
     getPresenter()->attachView(this);
     
@@ -241,7 +235,7 @@ int CMainWindow::OnCommand(WORD wNotifyCode, WORD wID, HWND hWndCtrl, BOOL &bHan
 
 
 LRESULT CMainWindow::OnNotify(int idCtrl, LPNMHDR pnmh) {
-    if (pnmh->hwndFrom == editorView) {
+    if (pnmh->hwndFrom == documentView) {
         auto notification = reinterpret_cast<SCNotification *>(pnmh);
 
         switch (pnmh->code) {
@@ -259,18 +253,18 @@ LRESULT CMainWindow::OnNotify(int idCtrl, LPNMHDR pnmh) {
 
 
 void CMainWindow::OnSize(UINT nType, CSize size) {
-    if (! editorView.IsWindow()) {
+    if (! documentView.IsWindow()) {
         return;
     }
 
     RECT clientRect;
     this->GetClientRect(&clientRect);
 
-    editorView.SetWindowPos(NULL, &clientRect, SWP_DRAWFRAME);
+    documentView.SetWindowPos(NULL, &clientRect, SWP_DRAWFRAME);
 }
 
 
-void CMainWindow::setupMenuBar() {
+void CMainWindow::SetupMenuBar() {
     HMENU hFileMenu = CreateMenu();
     ::AppendMenu(hFileMenu, MF_STRING, IDM_FILE_NEW, L"&New\t Ctrl+N");
     ::AppendMenu(hFileMenu, MF_SEPARATOR, 0, L"");
@@ -326,8 +320,18 @@ void CMainWindow::setupMenuBar() {
 }
 
 
+void CMainWindow::SetupDocumentEditor() {
+    RECT clientRect;
+
+    this->GetClientRect(&clientRect);
+
+    documentView.Create(L"Scintilla", m_hWnd, clientRect, L"", WS_CHILD | WS_VISIBLE);
+    documentView.SetStyle({STYLE_DEFAULT, Black, White, 10, "Consolas"});
+}
+
+
 Document* CMainWindow::getDocument() {
-    return &editorView;
+    return &documentView;
 }
 
 

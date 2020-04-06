@@ -1,6 +1,6 @@
 
 
-#include "CScintilla.hpp"
+#include "CDocument.hpp"
 #include "WindowsUtils.hpp"
 
 #include <iostream>
@@ -75,37 +75,37 @@ static std::string join_string(const std::vector<std::string> &elements, char de
 }
 
 
-void CScintilla::setContent(const std::string &content) {
+void CDocument::setContent(const std::string &content) {
     this->SetText(content.c_str());
 }
 
 
-std::string CScintilla::getContent() const {
+std::string CDocument::getContent() const {
     return this->GetText();
 }
 
 
-void CScintilla::clearContent() {
+void CDocument::clearContent() {
     this->SetWindowText(L"");
 }
 
 
-void CScintilla::setSelection(const TextSelection &selection) {
+void CDocument::setSelection(const TextSelection &selection) {
     this->SetSel(selection.start, selection.end, FALSE);
 }
 
 
-void CScintilla::selectAll() {
+void CDocument::selectAll() {
     this->SetSel(0, -1, FALSE);
 }
 
 
-void CScintilla::clearSelection() {
+void CDocument::clearSelection() {
     this->SetSel(-1, -1, FALSE);
 }
 
 
-TextSelection CScintilla::getSelection() const {
+TextSelection CDocument::getSelection() const {
     TextSelection selection = {0, 0};
 
     this->GetSel(selection.start, selection.end);
@@ -114,32 +114,32 @@ TextSelection CScintilla::getSelection() const {
 }
 
 
-void CScintilla::undo() {
+void CDocument::undo() {
     this->Undo();
 }
 
 
-void CScintilla::redo() {
+void CDocument::redo() {
     this->Redo();
 }
 
 
-void CScintilla::cut() {
+void CDocument::cut() {
     this->Cut();
 }
 
 
-void CScintilla::copy() {
+void CDocument::copy() {
     this->Copy();
 }
 
 
-void CScintilla::paste() {
+void CDocument::paste() {
     this->Paste();
 }
 
 
-void CScintilla::setFont(const Font &font) {
+void CDocument::setFont(const Font &font) {
     /*
     HFONT fontHandle = CreateFont(
         font.size, 0, 0, 0, FW_DONTCARE, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
@@ -159,13 +159,13 @@ void CScintilla::setFont(const Font &font) {
 }
 
 
-Font CScintilla::getFont() const {
+Font CDocument::getFont() const {
     // TODO: Font
     return {"", 12};
 }
 
 
-void CScintilla::applyLexer(const LexerConfiguration &value) {
+void CDocument::applyLexer(const LexerConfiguration &value) {
     const std::string joined_keywords = join_string(value.keywords, ' ');
 
     switch (value.lexer) {
@@ -218,17 +218,17 @@ void CScintilla::applyLexer(const LexerConfiguration &value) {
 }
 
 
-LRESULT CScintilla::SendCommand(UINT Msg, WPARAM wParam, LPARAM lParam) {
+LRESULT CDocument::SendCommand(UINT Msg, WPARAM wParam, LPARAM lParam) {
     return ::SendMessageW(m_hWnd, Msg, wParam, lParam);
 }
 
 
-LRESULT CScintilla::SendCommand(UINT Msg, WPARAM wParam, LPARAM lParam) const {
+LRESULT CDocument::SendCommand(UINT Msg, WPARAM wParam, LPARAM lParam) const {
     return ::SendMessageW(m_hWnd, Msg, wParam, lParam);
 }
 
 
-void CScintilla::SetStyle(int style, COLORREF fore, COLORREF back, int size, const char *face) {
+void CDocument::SetStyle(int style, COLORREF fore, COLORREF back, int size, const char *face) {
     this->SendCommand(SCI_STYLESETFORE, style, fore);
     this->SendCommand(SCI_STYLESETBACK, style, back);
 
@@ -242,7 +242,7 @@ void CScintilla::SetStyle(int style, COLORREF fore, COLORREF back, int size, con
 }
 
     
-void CScintilla::SetStyle(const ScintillaStyle &style) {
+void CDocument::SetStyle(const ScintillaStyle &style) {
     const char *face = nullptr;
 
     if (style.face != "") {
@@ -303,12 +303,12 @@ void CScintilla::OnInitialUpdate() {
 }
 */
 
-void CScintilla::SetText(const std::string &text) {
+void CDocument::SetText(const std::string &text) {
     this->SendCommand(SCI_SETTEXT, 0, (LPARAM)text.c_str());
 }
 
 
-std::string CScintilla::GetText() const {
+std::string CDocument::GetText() const {
     std::string content;
     const int length = (int)this->SendCommand(SCI_GETTEXTLENGTH) + 1;
     content.resize(length);
@@ -318,84 +318,84 @@ std::string CScintilla::GetText() const {
 }
     
 
-void CScintilla::SetSavePoint() {
+void CDocument::SetSavePoint() {
     this->SendCommand(SCI_SETSAVEPOINT);
 }
 
 
-void CScintilla::EmptyUndoBuffer() {
+void CDocument::EmptyUndoBuffer() {
     this->SendCommand(SCI_EMPTYUNDOBUFFER);
 }
 
 
-void CScintilla::ClearAll() { 
+void CDocument::ClearAll() { 
     this->SendCommand(SCI_CLEARALL);
 }
 
 
-void CScintilla::SetFont(const std::string &name, const int size) {
+void CDocument::SetFont(const std::string &name, const int size) {
 
 }
 
 
-void CScintilla::SetTabWidth(const int spaces) {
+void CDocument::SetTabWidth(const int spaces) {
     this->SendCommand(SCI_SETUSETABS, 0);
     this->SendCommand(SCI_SETTABWIDTH, spaces);
 }
 
 
-void CScintilla::Undo() {
+void CDocument::Undo() {
     this->SendCommand(SCI_UNDO);
 }
     
 
-void CScintilla::Redo() {
+void CDocument::Redo() {
     this->SendCommand(SCI_REDO);
 }
 
 
-void CScintilla::Cut() {
+void CDocument::Cut() {
     this->SendCommand(SCI_CUT);
 }
 
     
-void CScintilla::Copy() {
+void CDocument::Copy() {
     this->SendCommand(SCI_COPY);
 }
 
 
-void CScintilla::Paste() {
+void CDocument::Paste() {
     this->SendCommand(SCI_PASTE);
 }
 
 
-void CScintilla::SetSel(int start, int end, BOOL _) {
+void CDocument::SetSel(int start, int end, BOOL _) {
     this->SendCommand(SCI_SETSEL, start, end);
 }
 
 
-void CScintilla::GetSel(int &start, int &end) const {
+void CDocument::GetSel(int &start, int &end) const {
     start = (int)this->SendCommand(SCI_GETSELECTIONSTART);
     end = (int)this->SendCommand(SCI_GETSELECTIONEND);
 }
 
 
-void CScintilla::SetMarginType(const int margin, const int type) {
+void CDocument::SetMarginType(const int margin, const int type) {
     this->SendCommand(SCI_SETMARGINTYPEN, margin, type);
 }
 
     
-void CScintilla::SetMarginWidth(const int margin, const int pixelWidth) {
+void CDocument::SetMarginWidth(const int margin, const int pixelWidth) {
     this->SendCommand(SCI_SETMARGINWIDTHN, margin, pixelWidth);
 }
 
 
-int CScintilla::TextWidth(const int style, const std::string &text) {
+int CDocument::TextWidth(const int style, const std::string &text) {
     return (int) this->SendCommand(SCI_TEXTWIDTH, style, (LPARAM)text.c_str());
 }
 
 
-void CScintilla::ApplyConfig(const ScintillaConfig &config) {
+void CDocument::ApplyConfig(const ScintillaConfig &config) {
     this->SendCommand(SCI_SETLEXER, config.lexer);
     this->SendCommand(SCI_SETKEYWORDS, 0, (LPARAM)(config.keywords.c_str()));
     this->SendCommand(SCI_SETUSETABS, config.useTabs?1:0);

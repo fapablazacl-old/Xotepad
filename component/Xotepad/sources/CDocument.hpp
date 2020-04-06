@@ -52,7 +52,7 @@ struct ScintillaConfig {
 };
 
 
-class CScintilla : public CWindow, public Document {
+class CDocument : public CWindow, public Document {
 public:
     virtual void setContent(const std::string &content) override;
 
@@ -85,12 +85,12 @@ public:
     virtual void applyLexer(const LexerConfiguration &value) override;
 
 public:
-    CScintilla() {}
-    virtual ~CScintilla() {}
+    CDocument() {}
+    virtual ~CDocument() {}
 
-    CScintilla(const CScintilla&) = delete;
+    CDocument(const CDocument&) = delete;
 
-    CScintilla& operator= (const CScintilla&) = delete;
+    CDocument& operator= (const CDocument&) = delete;
 
     LRESULT SendCommand(UINT Msg, WPARAM wParam = 0, LPARAM lParam = 0);
 
