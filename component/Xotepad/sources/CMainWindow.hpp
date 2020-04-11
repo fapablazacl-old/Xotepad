@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include <optional>
+#include <cassert>
 
 #include <atlbase.h>
 #include <atlapp.h>
@@ -91,4 +92,5 @@ private:
 
 private:
     CDocument documentView;
+    CFindReplaceDialog simpleWindow;
 };
