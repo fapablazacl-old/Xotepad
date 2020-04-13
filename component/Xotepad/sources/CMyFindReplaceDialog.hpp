@@ -11,13 +11,17 @@
 #include <atlsplit.h>
 #include <atlmisc.h>
 
-class CFindReplaceDialog: public CWindowImpl<CFindReplaceDialog> {
+#include "FindReplaceDialog.hpp"
+#include "FindReplaceDialogPresenter.hpp"
+
+class CFindReplaceDialog: public CWindowImpl<CFindReplaceDialog>, public FindReplaceDialog {
 public:
     DECLARE_WND_CLASS(L"CFindReplaceDialog")
 
     BEGIN_MSG_MAP(CMainWindow)
         MSG_WM_CREATE(OnCreate)
         MSG_WM_ERASEBKGND(OnEraseBkgnd)
+        MSG_WM_COMMAND(OnCommand)
     END_MSG_MAP()
 
 public:
@@ -35,8 +39,9 @@ public:
         return hWnd;
     }
 
-
     int OnCreate(LPCREATESTRUCT lpCreateStruct);
+    
+    void OnCommand(UINT uNotifyCode, int nID, CWindow wndCtl);
     
     virtual BOOL OnEraseBkgnd(CDCHandle hdc);
 
@@ -48,8 +53,8 @@ private:
     CEdit replaceWithEdit;
 
     CButton matchGroupBox;
-    CButton matchCaseRadio;
-    CButton matchWholeWordRadio;
+    CButton matchCaseCheckBox;
+    CButton matchWholeWordCheckBox;
 
     CButton scopeGroupBox;
     CButton scopeSelectionRadio;
@@ -59,4 +64,13 @@ private:
     CButton replaceNextButton;
     CButton replaceAllButton;
     CButton closeButton;
+
+    FindReplaceDialogPresenter presenter;
+
+public:
+    virtual void show(const ViewData &viewData) override;
+
+    virtual void hide() override;
+
+    virtual void toggleReplaceControls(const bool status) override;
 };

@@ -21,6 +21,8 @@ set (sources
 	"sources/Document.hpp" 
 	"sources/FindReplaceDialog.cpp" 
 	"sources/FindReplaceDialog.hpp" 
+	"sources/FindReplaceDialogPresenter.cpp" 
+	"sources/FindReplaceDialogPresenter.hpp" 
 )
 
 source_group(\\ FILES ${sources})
