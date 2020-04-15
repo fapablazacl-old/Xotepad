@@ -96,21 +96,15 @@ struct Font {
 };
 
 
-class Document {
+class DocumentModel {
 public:
-    virtual ~Document();
+    virtual ~DocumentModel();
 
     virtual void setContent(const std::string &content) = 0;
 
     virtual std::string getContent() const = 0;
 
     virtual void clearContent() = 0;
-
-    virtual void setSelection(const TextSelection &selection) = 0;
-
-    virtual void selectAll() = 0;
-
-    virtual void clearSelection() = 0;
 
     virtual void undo() = 0;
 
@@ -121,6 +115,18 @@ public:
     virtual void copy() = 0;
 
     virtual void paste() = 0;
+};
+
+
+class Document {
+public:
+    virtual ~Document();
+
+    virtual void setSelection(const TextSelection &selection) = 0;
+
+    virtual void selectAll() = 0;
+
+    virtual void clearSelection() = 0;
 
     virtual TextSelection getSelection() const = 0;
 
@@ -129,4 +135,8 @@ public:
     virtual Font getFont() const = 0;
 
     virtual void applyLexer(const LexerConfiguration &value) = 0;
+
+    virtual DocumentModel* getModel() = 0;
+
+    virtual const DocumentModel* getModel() const = 0;
 };

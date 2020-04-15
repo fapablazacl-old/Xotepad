@@ -3,10 +3,11 @@
 
 #include <string>
 
+class Document;
 class FindReplaceDialog;
 class FindReplaceDialogPresenter {
 public:
-    void attachView(FindReplaceDialog *view);
+    void attachView(FindReplaceDialog *view, Document *documentView);
 
     void handleFindWhatTextBox_Change(const std::string &value);
 
@@ -32,11 +33,14 @@ public:
 
 private:
     FindReplaceDialog *view = nullptr;
+    Document *documentView = nullptr;
+
     std::string findWhat;
     std::string replaceWith;
     bool replaceInsteadOfFind = false;
     bool matchCase = false;
     bool matchWholeWord = false;
+    std::size_t currentOffset = 0;
 
     enum Scope {
         Selection, CurrentDocument

@@ -52,7 +52,7 @@ struct ScintillaConfig {
 };
 
 
-class CDocument : public CWindow, public Document {
+class CDocument : public CWindow, public Document, public DocumentModel {
 public:
     virtual void setContent(const std::string &content) override;
 
@@ -83,6 +83,14 @@ public:
     virtual Font getFont() const override;
 
     virtual void applyLexer(const LexerConfiguration &value) override;
+
+    virtual DocumentModel* getModel() {
+        return this;
+    }
+
+    virtual const DocumentModel* getModel() const {
+        return this;
+    }
 
 public:
     CDocument() {}

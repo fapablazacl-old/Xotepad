@@ -1,5 +1,7 @@
 
 #include "CMyFindReplaceDialog.hpp"
+
+#include "CDocument.hpp"
 #include "WindowsUtils.hpp"
 
 int CFindReplaceDialog::OnCreate(LPCREATESTRUCT lpCreateStruct) {
@@ -22,8 +24,6 @@ int CFindReplaceDialog::OnCreate(LPCREATESTRUCT lpCreateStruct) {
     this->CreateChild(replaceNextButton,    10, 320, 120, 30, L"Replace Next", WS_VISIBLE);
     this->CreateChild(replaceAllButton,     140, 320, 120, 30, L"Replace All", WS_VISIBLE);
     
-    presenter.attachView(this);
-
     return 0;
 }
 
@@ -35,6 +35,11 @@ BOOL CFindReplaceDialog::OnEraseBkgnd(CDCHandle hdc) {
     ::FillRect(hdc, &rect, (HBRUSH)COLOR_3DSHADOW);
 
     return TRUE;
+}
+
+
+void CFindReplaceDialog::AttachDocument(CDocument* document) {
+    presenter.attachView(this, document);
 }
 
 

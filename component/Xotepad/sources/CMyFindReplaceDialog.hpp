@@ -14,7 +14,8 @@
 #include "FindReplaceDialog.hpp"
 #include "FindReplaceDialogPresenter.hpp"
 
-class CFindReplaceDialog: public CWindowImpl<CFindReplaceDialog>, public FindReplaceDialog {
+class CDocument;
+class CFindReplaceDialog : public CWindowImpl<CFindReplaceDialog>, public FindReplaceDialog {
 public:
     DECLARE_WND_CLASS(L"CFindReplaceDialog")
 
@@ -44,6 +45,8 @@ public:
     void OnCommand(UINT uNotifyCode, int nID, CWindow wndCtl);
     
     virtual BOOL OnEraseBkgnd(CDCHandle hdc);
+
+    void AttachDocument(CDocument* document);
 
 private:
     CButton findReplaceGroupBox;

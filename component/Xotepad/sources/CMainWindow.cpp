@@ -212,7 +212,7 @@ int CMainWindow::OnCreate(LPCREATESTRUCT lpCreateStruct) {
     getPresenter()->attachView(this);
     
     RECT simpleWindowRect = {200, 200, 1000, 800};
-    simpleWindow.Create(*this, simpleWindowRect, L"Test", WS_OVERLAPPEDWINDOW, WS_EX_TOOLWINDOW | WS_EX_CONTROLPARENT);
+    findReplaceDialog.Create(*this, simpleWindowRect, L"Test", WS_OVERLAPPEDWINDOW, WS_EX_TOOLWINDOW | WS_EX_CONTROLPARENT);
 
     return 0;
 }
@@ -341,8 +341,6 @@ Document* CMainWindow::getDocument() {
 
 
 void CMainWindow::showFindReplace() {
-    // CMyFindReplaceDialog dialog;
-    // dialog.DoModal();
-
-    simpleWindow.ShowWindow(SW_SHOW);
+    findReplaceDialog.AttachDocument(&documentView);
+    findReplaceDialog.ShowWindow(SW_SHOW);
 }

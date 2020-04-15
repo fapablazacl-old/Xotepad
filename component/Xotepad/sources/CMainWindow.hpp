@@ -92,5 +92,5 @@ private:
 
 private:
     CDocument documentView;
-    CFindReplaceDialog simpleWindow;
+    CFindReplaceDialog findReplaceDialog;
 };

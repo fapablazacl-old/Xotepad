@@ -57,7 +57,7 @@ void MainWindowPresenter::handleFileNew() {
 
 DialogUserOutcome MainWindowPresenter::handleFileSave() {
     if (documentFileName) {
-        this->saveFile(*documentFileName, view->getDocument()->getContent());
+        this->saveFile(*documentFileName, view->getDocument()->getModel()->getContent());
 
         return DialogUserOutcome::Accept;
     }
@@ -108,7 +108,7 @@ DialogUserOutcome MainWindowPresenter::handleFileSaveAs() {
 
     if (auto result = view->showFilePickModal(FileDialog::Save, appTitle + " - Save File ...", filters); result) {
         const std::string fileName = *result;
-        const std::string content = view->getDocument()->getContent();
+        const std::string content = view->getDocument()->getModel()->getContent();
 
         this->saveFile(fileName, content);
 
@@ -120,7 +120,7 @@ DialogUserOutcome MainWindowPresenter::handleFileSaveAs() {
 
 
 void MainWindowPresenter::newFile() {
-    view->getDocument()->clearContent();
+    view->getDocument()->getModel()->clearContent();
 
     documentFileName.reset();
     documentDirty = false;
@@ -178,7 +178,7 @@ void MainWindowPresenter::loadFile(const std::string &fileName) {
     const auto lexerConfig = lexerService.getConfiguration(fileFilter->id);
 
     view->getDocument()->applyLexer(lexerConfig);
-    view->getDocument()->setContent(content);
+    view->getDocument()->getModel()->setContent(content);
 
     this->updateTitle();
 }
@@ -210,27 +210,27 @@ void MainWindowPresenter::handleCloseRequested() {
 
 
 void MainWindowPresenter::handleEditUndo() {
-    view->getDocument()->undo();
+    view->getDocument()->getModel()->undo();
 }
 
 
 void MainWindowPresenter::handleEditRedo() {
-    view->getDocument()->redo();
+    view->getDocument()->getModel()->redo();
 }
 
 
 void MainWindowPresenter::handleEditCut() {
-    view->getDocument()->cut();
+    view->getDocument()->getModel()->cut();
 }
 
 
 void MainWindowPresenter::handleEditCopy() {
-    view->getDocument()->copy();
+    view->getDocument()->getModel()->copy();
 }
 
 
 void MainWindowPresenter::handleEditPaste() {
-    view->getDocument()->paste();
+    view->getDocument()->getModel()->paste();
 }
 
 

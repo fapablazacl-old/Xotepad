@@ -1,10 +1,13 @@
 
 #include "FindReplaceDialogPresenter.hpp"
+#include "Document.hpp"
 
 #include <iostream>
 
-void FindReplaceDialogPresenter::attachView(FindReplaceDialog *view) {
+
+void FindReplaceDialogPresenter::attachView(FindReplaceDialog *view, Document *documentView) {
     this->view = view;
+    this->documentView = documentView;
 }
 
 
@@ -44,8 +47,18 @@ void FindReplaceDialogPresenter::handleCurrentDocumentScopeOptionBox_Click() {
 
 
 void FindReplaceDialogPresenter::handleFindNextButton_Click() {
-    // TODO: Add implementation
-    std::cout << "asdad" << std::endl;
+    const std::string content = this->documentView->getModel()->getContent();
+    std::size_t offset = content.find(findWhat, currentOffset);
+
+    if (offset == std::string::npos) {
+        currentOffset = 0;
+    }
+
+    const std::size_t length = findWhat.size();
+
+    documentView->setSelection({(int)offset, (int)(offset + length)});
+
+    currentOffset = offset + length;
 }
 
 
