@@ -1,6 +1,7 @@
 
 #include "FindReplaceDialogPresenter.hpp"
 #include "Document.hpp"
+#include "WindowsUtils.hpp"
 
 #include <iostream>
 
@@ -48,7 +49,9 @@ void FindReplaceDialogPresenter::handleCurrentDocumentScopeOptionBox_Click() {
 
 void FindReplaceDialogPresenter::handleFindNextButton_Click() {
     const std::string content = this->documentView->getModel()->getContent();
-    std::size_t offset = content.find(findWhat, currentOffset);
+    const auto flags = FIND_FLAGS((matchCase ? FF_MATCH_CASE : FF_DEFAULT) | (matchWholeWord ? FF_MATCH_WHOLE_WORD : FF_DEFAULT));
+
+    const std::size_t offset = find(content.c_str(), currentOffset, findWhat.c_str(), flags);
 
     if (offset == std::string::npos) {
         currentOffset = 0;
