@@ -41,6 +41,7 @@ int CFindReplaceDialog::OnCreate(LPCREATESTRUCT lpCreateStruct) {
             .left(10).width(10)
             .top(10).height(270);
     */
+
     this->CreateChild(findReplaceGroupBox,  10, 10, 270, 80, L"Find/Replace parameters", WS_VISIBLE | BS_GROUPBOX);
     this->CreateChild(findWhatLabel,        30, 30, 100, 20, L"Find what", WS_VISIBLE);
     this->CreateChild(findWhatEdit,         150, 30, 100, 20, L"", WS_VISIBLE | WS_TABSTOP, WS_EX_CLIENTEDGE);

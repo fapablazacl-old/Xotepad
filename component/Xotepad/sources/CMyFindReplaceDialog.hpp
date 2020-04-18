@@ -29,8 +29,8 @@ public:
     template<typename T>
     HWND CreateChild(T &child, int left, int top, int w, int h, wchar_t *windowName, const DWORD style, const DWORD exStyle = 0) {
         RECT rect = {
-            left, top,
-            left + w, top + h
+            uiScale * left, uiScale * top,
+            uiScale * (left + w), uiScale * (top + h)
         };
 
         HWND hWnd = child.Create(*this, rect, windowName, style | WS_CHILD, exStyle);
@@ -69,6 +69,8 @@ private:
     CButton closeButton;
 
     FindReplaceDialogPresenter presenter;
+    
+    const float uiScale = 2.25f;
 
 public:
     virtual void show(const ViewData &viewData) override;
