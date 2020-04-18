@@ -1,5 +1,6 @@
 
 #include "FindReplaceDialogPresenter.hpp"
+#include "FindReplaceDialog.hpp"
 #include "Document.hpp"
 #include "WindowsUtils.hpp"
 
@@ -19,6 +20,8 @@ void FindReplaceDialogPresenter::handleFindWhatTextBox_Change(const std::string 
 
 void FindReplaceDialogPresenter::handleReplaceWithCheckBox_Click(const bool checked) {
     replaceInsteadOfFind = checked;
+
+    view->toggleReplaceControls(checked);
 }
 
 

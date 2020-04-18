@@ -12,6 +12,7 @@ public:
     };
 
     struct ViewData {
+        std::string title;
         std::string findWhat;
         std::optional<std::string> replaceWith;
 

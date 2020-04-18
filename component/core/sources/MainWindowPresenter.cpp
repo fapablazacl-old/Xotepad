@@ -240,6 +240,7 @@ void MainWindowPresenter::handleEditSelectAll() {
 
 
 void MainWindowPresenter::handleEditFindReplace() {
+    // delegate to the presenter 
     view->showFindReplace();
 }
 

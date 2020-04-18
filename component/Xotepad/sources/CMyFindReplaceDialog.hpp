@@ -29,8 +29,8 @@ public:
     template<typename T>
     HWND CreateChild(T &child, int left, int top, int w, int h, wchar_t *windowName, const DWORD style, const DWORD exStyle = 0) {
         RECT rect = {
-            uiScale * left, uiScale * top,
-            uiScale * (left + w), uiScale * (top + h)
+            int(uiScale * left), int(uiScale * top),
+            int(uiScale * (left + w)), int(uiScale * (top + h))
         };
 
         HWND hWnd = child.Create(*this, rect, windowName, style | WS_CHILD, exStyle);

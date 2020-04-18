@@ -158,15 +158,36 @@ void CFindReplaceDialog::OnCommand(UINT uNotifyCode, int nID, CWindow wndCtl) {
 
 
 void CFindReplaceDialog::show(const ViewData &viewData) {
-    // ? what
+    this->SetWindowTextW(widen(viewData.title).c_str());
+
+    matchCaseCheckBox.SetCheck(viewData.matchCase ? BST_CHECKED : BST_UNCHECKED);
+    matchWholeWordCheckBox.SetCheck(viewData.matchWholeWorld ? BST_CHECKED : BST_UNCHECKED);
+
+    switch (viewData.scope) {
+    case FindReplaceDialog::SearchScope::Selection: 
+        scopeSelectionRadio.SetCheck(BST_CHECKED);
+        break;
+
+    case FindReplaceDialog::SearchScope::CurrentDocument:
+        scopeCurrentDocumentRadio.SetCheck(BST_CHECKED);
+        break;
+    }
+
+    if (viewData.replaceWith) {
+        replaceWithEdit.SetWindowTextW(widen(*viewData.replaceWith).c_str());
+    } else {
+        replaceWithEdit.SetWindowTextW(L"");
+    }
 }
 
 
 void CFindReplaceDialog::hide() {
-
+    this->ShowWindow(SW_HIDE);
 }
 
 
 void CFindReplaceDialog::toggleReplaceControls(const bool status) {
-
+    replaceAllButton.EnableWindow(status ? TRUE : FALSE);
+    replaceWithEdit.EnableWindow(status ? TRUE : FALSE);
+    replaceNextButton.EnableWindow(status ? TRUE : FALSE);
 }
