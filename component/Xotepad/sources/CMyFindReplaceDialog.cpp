@@ -4,7 +4,43 @@
 #include "CDocument.hpp"
 #include "WindowsUtils.hpp"
 
+struct Window {
+    Window& groupBox() {
+        return *this;
+    }
+
+    Window& caption(const char *text) {
+        return *this;
+    }
+
+    Window& left(const int value) {
+        return *this;
+    }
+    
+    Window& top(const int value) {
+        return *this;
+    }
+
+    Window& width(const int value) {
+        return *this;
+    }
+    
+    Window& height(const int value) {
+        return *this;
+    }
+};
+
+
 int CFindReplaceDialog::OnCreate(LPCREATESTRUCT lpCreateStruct) {
+    auto findReplaceUI = Window{};
+
+    /*
+    findReplaceUI
+        .groupBox()
+            .caption("Find/Replace parameters")
+            .left(10).width(10)
+            .top(10).height(270);
+    */
     this->CreateChild(findReplaceGroupBox,  10, 10, 270, 80, L"Find/Replace parameters", WS_VISIBLE | BS_GROUPBOX);
     this->CreateChild(findWhatLabel,        30, 30, 100, 20, L"Find what", WS_VISIBLE);
     this->CreateChild(findWhatEdit,         150, 30, 100, 20, L"", WS_VISIBLE | WS_TABSTOP, WS_EX_CLIENTEDGE);
