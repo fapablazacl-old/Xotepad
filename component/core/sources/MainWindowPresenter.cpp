@@ -240,8 +240,8 @@ void MainWindowPresenter::handleEditSelectAll() {
 
 
 void MainWindowPresenter::handleEditFindReplace() {
-    // delegate to the presenter 
-    view->showFindReplace();
+    findReplacePresenter.attachView(view->getFindReplace(), view->getDocument());
+    findReplacePresenter.handleEditFindReplace();
 }
 
 

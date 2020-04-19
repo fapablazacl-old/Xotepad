@@ -36,6 +36,7 @@ struct FileFilter {
     std::vector<std::string> wildcards;
 };
 
+class FindReplaceDialog;
 
 class MainWindowPresenter;
 class MainWindow {
@@ -56,7 +57,7 @@ public:
 
     virtual Document* getDocument() = 0;
 
-    virtual void showFindReplace() = 0;
+    virtual FindReplaceDialog* getFindReplace() = 0;
 
 protected:
     MainWindowPresenter *getPresenter() {

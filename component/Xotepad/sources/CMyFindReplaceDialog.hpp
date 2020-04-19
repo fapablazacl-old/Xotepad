@@ -68,11 +68,13 @@ private:
     CButton replaceAllButton;
     CButton closeButton;
 
-    FindReplaceDialogPresenter presenter;
+    FindReplaceDialogPresenter *presenter = nullptr;
     
     const float uiScale = 2.25f;
 
 public:
+    virtual void attachPresenter(FindReplaceDialogPresenter *presenter) override;
+
     virtual void show(const ViewData &viewData) override;
 
     virtual void hide() override;

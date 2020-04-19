@@ -4,6 +4,7 @@
 #include <string>
 #include <optional>
 
+class FindReplaceDialogPresenter;
 class FindReplaceDialog {
 public:
     enum SearchScope {
@@ -24,6 +25,8 @@ public:
 
 public:
     virtual ~FindReplaceDialog();
+
+    virtual void attachPresenter(FindReplaceDialogPresenter *presenter) = 0;
 
     virtual void show(const ViewData &viewData) = 0;
 

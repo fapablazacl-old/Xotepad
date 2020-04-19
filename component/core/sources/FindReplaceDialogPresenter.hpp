@@ -9,6 +9,8 @@ class FindReplaceDialogPresenter {
 public:
     void attachView(FindReplaceDialog *view, Document *documentView);
 
+    void handleEditFindReplace();
+
     void handleFindWhatTextBox_Change(const std::string &value);
 
     void handleReplaceWithCheckBox_Click(const bool checked);

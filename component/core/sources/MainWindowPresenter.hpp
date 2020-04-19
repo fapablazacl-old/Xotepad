@@ -4,6 +4,8 @@
 #include <optional>
 #include <string>
 
+#include "FindReplaceDialogPresenter.hpp"
+
 enum class AfterCheckAction {
     Stop,
     Continue
@@ -15,6 +17,7 @@ enum class DialogUserOutcome {
     Accept
 };
 
+class FindReplaceDialogPresenter;
 
 class MainWindow;
 class MainWindowPresenter {
@@ -68,6 +71,7 @@ private:
 
 private:
     MainWindow *view = nullptr;
+    FindReplaceDialogPresenter findReplacePresenter;
 
     std::optional<std::string> documentFileName;
     bool documentDirty = false;

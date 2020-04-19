@@ -83,7 +83,7 @@ public:
 
     virtual Document* getDocument() override;
 
-    virtual void showFindReplace() override;
+    virtual FindReplaceDialog* getFindReplace() override;
 
 private:
     void SetupMenuBar();

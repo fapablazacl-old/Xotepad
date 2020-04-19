@@ -3,6 +3,7 @@
 
 #include "CDocument.hpp"
 #include "WindowsUtils.hpp"
+#include <cassert>
 
 struct Window {
     Window& groupBox() {
@@ -76,34 +77,38 @@ BOOL CFindReplaceDialog::OnEraseBkgnd(CDCHandle hdc) {
 
 
 void CFindReplaceDialog::AttachDocument(CDocument* document) {
-    presenter.attachView(this, document);
+    assert(presenter);
+
+    presenter->attachView(this, document);
 }
 
 
 void CFindReplaceDialog::OnCommand(UINT uNotifyCode, int nID, CWindow wndCtl) {
+    assert(presenter);
+
     if (wndCtl == findNextButton) {
-        presenter.handleFindNextButton_Click();
+        presenter->handleFindNextButton_Click();
     }
 
     if (wndCtl == replaceNextButton) {
-        presenter.handleReplaceNextButton_Click();
+        presenter->handleReplaceNextButton_Click();
     }
 
     if (wndCtl == replaceAllButton) {
-        presenter.handleReplaceAllButton_Click();
+        presenter->handleReplaceAllButton_Click();
     }
 
     if (wndCtl == closeButton) {
-        presenter.handleCloseButton_Click();
+        presenter->handleCloseButton_Click();
     }
 
     if (wndCtl == replaceWithCheckBox) {
         LRESULT state = replaceWithCheckBox.SendMessageW(BM_GETCHECK);
 
         if (state == BST_CHECKED) {
-            presenter.handleReplaceWithCheckBox_Click(true);
+            presenter->handleReplaceWithCheckBox_Click(true);
         } else if (state == BST_UNCHECKED) {
-            presenter.handleReplaceWithCheckBox_Click(false);
+            presenter->handleReplaceWithCheckBox_Click(false);
         }
     }
 
@@ -111,9 +116,9 @@ void CFindReplaceDialog::OnCommand(UINT uNotifyCode, int nID, CWindow wndCtl) {
         LRESULT state = matchCaseCheckBox.SendMessageW(BM_GETCHECK);
 
         if (state == BST_CHECKED) {
-            presenter.handleMatchCaseCheckBox_Click(true);
+            presenter->handleMatchCaseCheckBox_Click(true);
         } else if (state == BST_UNCHECKED) {
-            presenter.handleMatchCaseCheckBox_Click(false);
+            presenter->handleMatchCaseCheckBox_Click(false);
         }
     }
 
@@ -121,18 +126,18 @@ void CFindReplaceDialog::OnCommand(UINT uNotifyCode, int nID, CWindow wndCtl) {
         LRESULT state = matchWholeWordCheckBox.SendMessageW(BM_GETCHECK);
 
         if (state == BST_CHECKED) {
-            presenter.handleMatchWholeWordCheckBox_Click(true);
+            presenter->handleMatchWholeWordCheckBox_Click(true);
         } else if (state == BST_UNCHECKED) {
-            presenter.handleMatchWholeWordCheckBox_Click(false);
+            presenter->handleMatchWholeWordCheckBox_Click(false);
         }
     }
 
     if (wndCtl == scopeSelectionRadio) {
-        presenter.handleSelectionScopeOptionBox_Click();
+        presenter->handleSelectionScopeOptionBox_Click();
     }
     
     if (wndCtl == scopeCurrentDocumentRadio) {
-        presenter.handleCurrentDocumentScopeOptionBox_Click();
+        presenter->handleCurrentDocumentScopeOptionBox_Click();
     }
 
     if (wndCtl == findWhatEdit) {
@@ -140,7 +145,7 @@ void CFindReplaceDialog::OnCommand(UINT uNotifyCode, int nID, CWindow wndCtl) {
             case EN_CHANGE: {
                 CString str;
                 findWhatEdit.GetWindowTextW(str);
-                presenter.handleFindWhatTextBox_Change(narrow(str));
+                presenter->handleFindWhatTextBox_Change(narrow(str));
             }
         }
     }
@@ -150,7 +155,7 @@ void CFindReplaceDialog::OnCommand(UINT uNotifyCode, int nID, CWindow wndCtl) {
             case EN_CHANGE: {
                 CString str;
                 replaceWithEdit.GetWindowTextW(str);
-                presenter.handleReplaceWithTextBox_Change(narrow(str));
+                presenter->handleReplaceWithTextBox_Change(narrow(str));
             }
         }
     }
@@ -178,6 +183,8 @@ void CFindReplaceDialog::show(const ViewData &viewData) {
     } else {
         replaceWithEdit.SetWindowTextW(L"");
     }
+
+    this->ShowWindow(SW_SHOW);
 }
 
 
@@ -190,4 +197,9 @@ void CFindReplaceDialog::toggleReplaceControls(const bool status) {
     replaceAllButton.EnableWindow(status ? TRUE : FALSE);
     replaceWithEdit.EnableWindow(status ? TRUE : FALSE);
     replaceNextButton.EnableWindow(status ? TRUE : FALSE);
+}
+
+
+void CFindReplaceDialog::attachPresenter(FindReplaceDialogPresenter *presenter) {
+    this->presenter = presenter;
 }

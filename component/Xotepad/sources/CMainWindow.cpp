@@ -208,12 +208,12 @@ void CMainWindow::OnClose() {
 int CMainWindow::OnCreate(LPCREATESTRUCT lpCreateStruct) {
     this->SetupMenuBar();
     this->SetupDocumentEditor();
+    
+    RECT findReplaceWindowRect = {200, 300, 850, 1200};
+    findReplaceDialog.Create(*this, findReplaceWindowRect, L"", WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME, WS_EX_TOOLWINDOW | WS_EX_CONTROLPARENT);
 
     getPresenter()->attachView(this);
     
-    RECT simpleWindowRect = {200, 200, 1000, 800};
-    findReplaceDialog.Create(*this, simpleWindowRect, L"Test", WS_OVERLAPPEDWINDOW, WS_EX_TOOLWINDOW | WS_EX_CONTROLPARENT);
-
     return 0;
 }
 
@@ -340,7 +340,6 @@ Document* CMainWindow::getDocument() {
 }
 
 
-void CMainWindow::showFindReplace() {
-    findReplaceDialog.AttachDocument(&documentView);
-    findReplaceDialog.ShowWindow(SW_SHOW);
+FindReplaceDialog* CMainWindow::getFindReplace()  {
+    return &findReplaceDialog;
 }

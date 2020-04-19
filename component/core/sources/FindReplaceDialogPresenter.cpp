@@ -10,6 +10,27 @@
 void FindReplaceDialogPresenter::attachView(FindReplaceDialog *view, Document *documentView) {
     this->view = view;
     this->documentView = documentView;
+
+    view->attachPresenter(this);
+}
+
+
+void FindReplaceDialogPresenter::handleEditFindReplace() {
+    FindReplaceDialog::ViewData viewData;
+
+    viewData.title = "Find/Replace in Document ...";
+    viewData.findWhat = this->findWhat;
+    viewData.matchCase = this->matchCase;
+    viewData.matchWholeWorld = this->matchWholeWord;
+    viewData.replaceWith = this->replaceWith;
+
+    if (this->scope == Scope::CurrentDocument) {
+        viewData.scope = FindReplaceDialog::CurrentDocument;
+    } else if (this->scope == Scope::Selection) {
+        viewData.scope = FindReplaceDialog::Selection;
+    }
+
+    view->show(viewData);
 }
 
 
