@@ -8,6 +8,8 @@
 CAppModule _Module;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+    CMessageLoop loop;
+
     ::SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
 
     ::CoInitialize(NULL);
@@ -21,8 +23,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     MainWindowPresenter presenter;
     CMainWindow mainWindow(&presenter);
 
-    MSG msg;
-
     if (NULL == mainWindow.Create(NULL, CWindow::rcDefault, _T("Xotepad"))) {
         return 1;
     }
@@ -30,10 +30,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     mainWindow.ShowWindow(nCmdShow);
     mainWindow.UpdateWindow();
 
-    while (::GetMessage(&msg, NULL, 0, 0) > 0) {
-        ::TranslateMessage(&msg);
-        ::DispatchMessage(&msg);
-    }
+    _Module.AddMessageLoop(&loop);
+
+    int exitCode = loop.Run();
+
+    _Module.RemoveMessageLoop();
 
     mainWindow.DestroyWindow();
 
@@ -41,5 +42,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     ::CoUninitialize();
     
-    return static_cast<int>(msg.wParam);
+    return exitCode;
 }
