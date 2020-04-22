@@ -18,7 +18,7 @@
 
 #include "MainWindow.hpp"
 #include "CDocument.hpp"
-#include "CMyFindReplaceDialog.hpp"
+#include "CFindReplaceDialog.hpp"
 
 
 class CMainWindow : public CWindowImpl<CMainWindow, CWindow, CFrameWinTraits>, public MainWindow {

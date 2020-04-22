@@ -2,11 +2,9 @@
 #include "CMainWindow.hpp"
 #include "MainWindowPresenter.hpp"
 #include "WindowsUtils.hpp"
-#include "CMyFindReplaceDialog.hpp"
 
 #include <vector>
 #include <atldlgs.h>
-
 
 
 void CMainWindow::setTitle(const std::string &title) {
