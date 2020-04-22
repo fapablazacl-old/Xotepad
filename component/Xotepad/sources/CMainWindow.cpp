@@ -243,10 +243,13 @@ LRESULT CMainWindow::OnNotify(int idCtrl, LPNMHDR pnmh) {
 
         switch (pnmh->code) {
             case SCN_MODIFIED: {
-                if (notification->modificationType & SC_PERFORMED_USER) {
+                const auto mt = notification->modificationType;
+
+                if ( (mt & SC_PERFORMED_USER) && (mt & SC_MOD_INSERTTEXT) ) {
                     // NOTE: This gets called when we set the text via the Scintilla API ...
                     getPresenter()->handleContentModified();
                 }
+                break;
             }
         }
     }

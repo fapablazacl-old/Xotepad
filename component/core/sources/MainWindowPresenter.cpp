@@ -170,9 +170,6 @@ void MainWindowPresenter::loadFile(const std::string &fileName) {
     const FileService fileService;
     const std::string content = fileService.loadFile(fileName.c_str());
 
-    this->documentFileName = fileName;
-    this->documentDirty = false;
-    
     const auto fileFilter = matchFileFilter(enumerateFilters(), boost::filesystem::path(fileName).filename().string());
     const LexerConfigurationService lexerService;
     const auto lexerConfig = lexerService.getConfiguration(fileFilter->id);
@@ -180,6 +177,11 @@ void MainWindowPresenter::loadFile(const std::string &fileName) {
     view->getDocument()->applyLexer(lexerConfig);
     view->getDocument()->getModel()->setContent(content);
 
+    // FIXME: On Windows, setContent triggers a Notification for modified file.
+    // so we set the internal variables here
+    this->documentFileName = fileName;
+    this->documentDirty = false;
+    
     this->updateTitle();
 }
 
