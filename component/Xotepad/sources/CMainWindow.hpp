@@ -25,7 +25,8 @@ class CMainWindow : public CWindowImpl<CMainWindow, CWindow, CFrameWinTraits>, p
 public:
     DECLARE_WND_CLASS(_T("CMainWindow"))
     BEGIN_MSG_MAP(CMainWindow)
-        COMMAND_CODE_HANDLER(0, OnCommand)
+        COMMAND_CODE_HANDLER(0, OnCommand)  // command generated from user click's
+        COMMAND_CODE_HANDLER(1, OnCommand)  // command generated from Accelerator table
 
         MSG_WM_CREATE(OnCreate)
         MSG_WM_CLOSE(OnClose)
@@ -72,6 +73,10 @@ public:
 
     LRESULT OnNotify(int idCtrl, LPNMHDR pnmh);
 
+    CAcceleratorT<true>& GetAcceleratorTable() {
+        return acceleratorTable;
+    }
+
 public:
     virtual void terminateApp() override;
 
@@ -93,4 +98,5 @@ private:
 private:
     CDocument documentView;
     CFindReplaceDialog findReplaceDialog;
+    CAcceleratorT<true> acceleratorTable;
 };

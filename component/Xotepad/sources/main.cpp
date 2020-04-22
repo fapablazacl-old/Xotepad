@@ -8,8 +8,6 @@
 CAppModule _Module;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-    CMessageLoop loop;
-
     ::SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
 
     ::CoInitialize(NULL);
@@ -30,11 +28,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     mainWindow.ShowWindow(nCmdShow);
     mainWindow.UpdateWindow();
 
-    _Module.AddMessageLoop(&loop);
+    MSG msg = {};
 
-    int exitCode = loop.Run();
-
-    _Module.RemoveMessageLoop();
+    while (::GetMessage(&msg, NULL, 0, 0) > 0) {
+        if (! ::TranslateAccelerator(mainWindow, mainWindow.GetAcceleratorTable(), &msg)) {
+            ::TranslateMessage(&msg);
+            ::DispatchMessage(&msg);
+        }
+    }
 
     mainWindow.DestroyWindow();
 
@@ -42,5 +43,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     ::CoUninitialize();
     
-    return exitCode;
+    return static_cast<int>(msg.wParam);
 }

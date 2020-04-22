@@ -317,9 +317,9 @@ void CMainWindow::SetupMenuBar() {
         {FVIRTKEY, VK_F1, IDM_HELP_ABOUT},        
     };
 
-    HACCEL hAccel = CreateAcceleratorTable(accelerators.data(), (int)accelerators.size());
+    HACCEL hAccel = ::CreateAcceleratorTable( accelerators.data(), static_cast<int>(accelerators.size()) );
 
-    // GetApp()->SetAccelerators(hAccel, *this);
+    acceleratorTable.Attach(hAccel);
 }
 
 
