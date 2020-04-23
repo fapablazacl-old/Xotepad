@@ -113,15 +113,23 @@ std::size_t find_impl(const char *str, const char *substr, CharComparator equals
 
 std::size_t find(const char *str, const std::size_t offset, const char *substr, const FIND_FLAGS flags) {
     if (flags == FF_DEFAULT) {
-        return find_impl(&str[offset], substr, [](const char ch1, const char ch2) {
+        const std::size_t partial_offset = find_impl(&str[offset], substr, [](const char ch1, const char ch2) {
             return std::tolower(ch1) == std::tolower(ch2);
         });
+
+        if (partial_offset == std::string::npos) {
+            return std::string::npos;
+        }
+
+        return offset + partial_offset;
     }
 
     if (flags == FF_MATCH_CASE) {
-        return find_impl(&str[offset], substr, [](const char ch1, const char ch2) {
+        const std::size_t partial_offset = find_impl(&str[offset], substr, [](const char ch1, const char ch2) {
             return ch1 == ch2;
         });
+
+        return offset + partial_offset;
     }
 
     return std::string::npos;
