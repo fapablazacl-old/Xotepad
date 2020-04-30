@@ -34,6 +34,9 @@ public:
     void handleCloseButton_Click();
 
 private:
+    bool findNext(const size_t offset);
+
+private:
     FindReplaceDialog *view = nullptr;
     Document *documentView = nullptr;
 
@@ -42,7 +45,6 @@ private:
     bool replaceInsteadOfFind = false;
     bool matchCase = false;
     bool matchWholeWord = false;
-    std::size_t currentOffset = 0;
 
     enum Scope {
         Selection, CurrentDocument

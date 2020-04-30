@@ -72,20 +72,28 @@ void FindReplaceDialogPresenter::handleCurrentDocumentScopeOptionBox_Click() {
 
 
 void FindReplaceDialogPresenter::handleFindNextButton_Click() {
+    const size_t currentOffset = documentView->getSelection().end;
+
+    if (! findNext(currentOffset)) {
+        findNext(0);
+    }
+}
+
+
+bool FindReplaceDialogPresenter::findNext(const size_t currentOffset) {
     const std::string content = this->documentView->getModel()->getContent();
     const auto flags = FIND_FLAGS((matchCase ? FF_MATCH_CASE : FF_DEFAULT) | (matchWholeWord ? FF_MATCH_WHOLE_WORD : FF_DEFAULT));
 
     const std::size_t offset = find(content.c_str(), currentOffset, findWhat.c_str(), flags);
 
     if (offset == std::string::npos) {
-        currentOffset = 0;
-    }
+        return false;
+    } 
 
     const std::size_t length = findWhat.size();
-
     documentView->setSelection({(int)offset, (int)(offset + length)});
-
-    currentOffset = offset + length;
+    
+    return true;
 }
 
 
