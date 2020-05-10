@@ -26,6 +26,8 @@ public:
     END_MSG_MAP()
 
 public:
+    CFindReplaceDialog();
+
     template<typename T>
     HWND CreateChild(T &child, int left, int top, int w, int h, wchar_t *windowName, const DWORD style, const DWORD exStyle = 0) {
         RECT rect = {
@@ -70,7 +72,7 @@ private:
 
     FindReplaceDialogPresenter *presenter = nullptr;
     
-    const float uiScale = 2.25f;
+    float uiScale = 2.25f;
 
 public:
     virtual void attachPresenter(FindReplaceDialogPresenter *presenter) override;

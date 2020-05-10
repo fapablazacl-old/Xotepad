@@ -5,35 +5,30 @@
 #include "WindowsUtils.hpp"
 #include <cassert>
 
-struct Window {
-    Window& groupBox() {
-        return *this;
-    }
+#include "FormDSL.h"
 
-    Window& caption(const char *text) {
-        return *this;
-    }
 
-    Window& left(const int value) {
-        return *this;
-    }
-    
-    Window& top(const int value) {
-        return *this;
-    }
-
-    Window& width(const int value) {
-        return *this;
-    }
-    
-    Window& height(const int value) {
-        return *this;
-    }
-};
+CFindReplaceDialog::CFindReplaceDialog() { }
 
 
 int CFindReplaceDialog::OnCreate(LPCREATESTRUCT lpCreateStruct) {
-    auto findReplaceUI = Window{};
+    /*
+    auto builder = dsl::WindowBuilder{"CFindReplaceDialog"};
+
+    builder
+        .child(dsl::WindowBuilder::groupBox()
+            .caption("Find/Replace parameters")
+            .position(10, 10)
+            .size(270, 80)
+        )
+        .child(dsl::WindowBuilder::label()
+            .caption("Find what")
+            .position(30, 30)
+        )
+        .build();
+
+    */
+    // auto findReplaceUI = Window{};
 
     /*
     findReplaceUI
@@ -42,6 +37,8 @@ int CFindReplaceDialog::OnCreate(LPCREATESTRUCT lpCreateStruct) {
             .left(10).width(10)
             .top(10).height(270);
     */
+    UINT dpi = GetDpiForWindow(this->m_hWnd);
+    this->uiScale = (static_cast<float>(dpi) / 96.0f) * 0.9f;
 
     this->CreateChild(findReplaceGroupBox,  10, 10, 270, 80, L"Find/Replace parameters", WS_VISIBLE | BS_GROUPBOX);
     this->CreateChild(findWhatLabel,        30, 30, 100, 20, L"Find what", WS_VISIBLE);
